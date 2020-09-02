@@ -42,9 +42,7 @@ A view of this is illustrated in the following diagram:
 
 **Image Source:** `Prometheus Instances for Kubernetes and Applications <https://miro.medium.com/max/700/1*PK2FdiI5mwLTTOgik0BaJg.png>`_
 
-Our very own DevOps Architect Christophe Jauffret has written a great article to deploy a separate instance of Prometheus to monitor user applications over here.
-
-https://medium.com/@christophe_99995/applications-metrics-monitoring-on-nutanix-karbon-c1d1158ebcfc
+Nutanix's very own DevOps Architect Christophe Jauffret has written a great article `here <https://medium.com/@christophe_99995/applications-metrics-monitoring-on-nutanix-karbon-c1d1158ebcfc>`_ to deploy a separate instance of Prometheus to monitor user applications over here. You could recommend this method to a prospective customer.
 
 .. note::
 
