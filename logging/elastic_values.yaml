@@ -1,0 +1,33 @@
+---
+# Permit co-located instances for solitary minikube virtual machines.
+# antiAffinity: "soft"
+
+# Elasticsearch roles that will be applied to this nodeGroup
+# These will be set as environment variables. E.g. node.master=true
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+
+replicas: 3
+minimumMasterNodes: 1
+
+# Shrink default JVM heap.
+esJavaOpts: "-Xmx128m -Xms128m"
+
+# Allocate smaller chunks of memory per pod.
+resources:
+  requests:
+    cpu: "100m"
+    memory: "512M"
+  limits:
+    cpu: "1000m"
+    memory: "512M"
+
+# Request smaller persistent volumes.
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  storageClassName: "standard"
+  resources:
+    requests:
+      storage: 100M

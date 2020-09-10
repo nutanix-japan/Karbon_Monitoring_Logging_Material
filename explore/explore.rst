@@ -13,7 +13,7 @@ Node Exporter
 
 Node exporter is used to export metrics from each of the Kubernetes nodes. So a Kubernetes `daemonset <https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/>`_ is used to accomplish this task.
 
-Daemonset makes sure there is an instance of node-exporter pod in each node of the cluster as shown below.
+Daemonset makes sure there is an instance of node-exporter po,zd in each node of the cluster as shown below.
 
 .. figure:: images/node-exporter-daemonset.png
 
@@ -23,7 +23,7 @@ So we are sure that metrics are being collected and uploaded to the Prometheus m
 Prometheus Operator
 ++++++++++++++++++++
 
-As we already know kubernetes has resources like deployments and daemonsets (not limited to) for managing stateless applications, Operators are kubernetes extensions that will allow for stateful applications to be managed. As stateful applications need more domain specific knowledge of scaling, upgrading and reconfiguring, operators provide a way of doing this.
+As we already know Kubernetes has resources like deployments and daemonsets (not limited to) for managing stateless applications, Operators are kubernetes extensions that will allow for stateful applications to be managed. As stateful applications need more domain specific knowledge of scaling, upgrading and reconfiguring, operators provide a way of doing this.
 
 Operators can be developed individually or obtained from a community maintaining these.
 
