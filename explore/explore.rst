@@ -33,9 +33,9 @@ Let's access the Prometheus UI to check for available metrics.
 
     k get svc -n ntnx-system
 
-   .. figure:: images/porm-svc-port.png
+   .. figure:: images/prom-svc-port.png
 
-#. Now let's forward the port to your Linux Mint VM to be able to access Prometheus UI.
+#. Now let's forward Prometheus service's ``9090``  port to your Linux Mint VM to be able to access Prometheus UI.
 
    .. code-block:: bash
 
@@ -53,13 +53,15 @@ Let's access the Prometheus UI to check for available metrics.
 
 #. Here I will choose **go_memstats_alloc_bytes** metrics and check if I get any data. Note that the query text-box is now populated with the query **go_memstats_alloc_bytes**
 
-#. Click on **Execute**. You will see the results similar to following figure.
+#. Click on **Execute**. You will see the results of memory used by each kubernetes resource (pod) as show in the following figure.
 
    .. figure:: images/prom-query.png
 
 #. Notice that there is also a **Graph** option in Prometheus GUI for the selected metrics. Click on **Graph** to visualise the chosen metrics.
 
    .. figure:: images/prom-graph.png
+
+In day to day operations, most of the metrics made available in the default implementation of Prometheus in Nutanix Karbon deployed kubernetes clusters. Highlight this fact to a customer during a design workshop. 
 
 Prometheus Operator
 ++++++++++++++++++++

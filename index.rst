@@ -10,6 +10,7 @@
   explore/explore
   deploy/deploy
   configure/configure
+  visualise/visualise
   cleanup/cleanup
 
 .. toctree::
