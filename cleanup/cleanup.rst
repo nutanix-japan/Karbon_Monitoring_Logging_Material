@@ -18,7 +18,7 @@ Cleanup your namespace. This will also delete all the resources inside the names
 
 .. code-block:: bash
 
- # change to ``ntnx-system`` to be able to list deployed helm charts in that namespace
+ # change to ntnx-system to be able to list deployed helm charts in that namespace
 
  k config set-context $(k config current-context) --namespace=ntnx-system
 
@@ -46,4 +46,5 @@ this process is quite simple.
 - Elastic Stack is open-source logging collector, analyser and visualisation framework
 - Nutanix Karbon deployed kubernetes has a default implementation of Elastic Stack (Elastisearch and Kibana), and Fluent Bit for logs processing
 - Kibana is the log visualisation tool of choice in the Elastic Stack
-- Customer are able to deploy their own instance of Elastic Stack for their applications
+- Customers are able to deploy their own instance of Elastic Stack for their applications
+- Kubernetes operators are a easy way of installing, upgrading, life-cycle managing a complex stateful application
