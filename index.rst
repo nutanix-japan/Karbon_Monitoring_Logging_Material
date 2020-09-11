@@ -8,8 +8,7 @@
 
   promgraf/promgraf
   explore/explore
-  deploy/deploy
-  configure/configure
+  connect/connect
   visualise/visualise
   cleanup/cleanup
 

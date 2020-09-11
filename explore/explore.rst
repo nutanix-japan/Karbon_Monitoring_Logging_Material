@@ -3,7 +3,7 @@
 .. title:: Explore Monitoring Resoruces
 
 -------------------------------
-Explore
+Exploring Prometheus in Karbon
 -------------------------------
 
 In this section we will explore the ``ntnx-system`` namespace in a given Nutanix Karbon deployed kubernetes cluster and its resources in terms of Prometheus monitoring
@@ -61,7 +61,7 @@ Let's access the Prometheus UI to check for available metrics.
 
    .. figure:: images/prom-graph.png
 
-In day to day operations, most of the metrics made available in the default implementation of Prometheus in Nutanix Karbon deployed kubernetes clusters. Highlight this fact to a customer during a design workshop. 
+In day to day operations, most of the metrics made available in the default implementation of Prometheus in Nutanix Karbon deployed kubernetes clusters. Highlight this fact to a customer during a design workshop.
 
 Prometheus Operator
 ++++++++++++++++++++

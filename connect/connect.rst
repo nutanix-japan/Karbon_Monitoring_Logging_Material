@@ -3,7 +3,7 @@
 .. title:: Install Grafana
 
 -----------------------------
-Install Grafana
+Installing Grafana in Karbon
 -----------------------------
 
 In this exercise we will install Grafana into the same `ntnx-system` namespace using Helm. If you haven’t got Helm deployed use these :ref:`_helm` instructions to deploy it in your Linux Mint VM

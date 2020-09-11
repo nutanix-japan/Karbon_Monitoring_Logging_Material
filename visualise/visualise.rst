@@ -3,7 +3,7 @@
 .. title:: Visualise Metrics
 
 -------------------------------------
-Configuring Dashboards in Grafana
+Visualising Metrics in Karbon
 -------------------------------------
 
 In this section we will configure dashboards to visualise the metrics collected by Prometheus.
