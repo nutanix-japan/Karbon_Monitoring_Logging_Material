@@ -117,7 +117,7 @@ Install Grafana
 
      k get secret --namespace ntnx-system grafana-1597884244 -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 
-#. To find the nodeport and access URL for Grafana, execute the following commands
+#. To find the nodeport and access URL for Grafana, execute the following commands to get Grafana service details
 
    .. code-block:: bash
 
@@ -126,17 +126,17 @@ Install Grafana
 
    .. figure:: images/get-nodes-ip.png
 
-   So we have a node IP here ``10.42.8.61`` (you can choose either nodes)
+   So we have a node IP here ``10.42.8.60`` (you can choose either nodes)
 
    .. figure:: images/nodeport-graf.png
 
-   We have hte nodeport as ``32493``
+   We have the nodeport as ``32493``
 
    Now we have the access URL in this form
 
    ``http://<IP>:<nodeport>``
 
-   ``http://10.42.8.61:32493``
+   ``http://10.42.8.60:32493``
 
 #. Login to Grafana in a browser using the access URL and password from the previous steps
 
@@ -191,3 +191,10 @@ Setting up a Data Source
      9090 - prometheus ClusterIP port
 
      This is the DNS reference of the Prometheus service within your namespace. All services in the namespace are able to resolve by doing a DNS lookup with kube-dns DNS server.
+
+#. You should see a **Data source is working** message to confirm. If this is not working check for typos in the datasource URL.
+
+   .. figure:: images/working-ds.png
+
+
+Now that we have configured a datasource for Grafana, lets move to configuring dashboards and visualising metrics in the next section.
