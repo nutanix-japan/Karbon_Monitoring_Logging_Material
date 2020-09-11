@@ -3,7 +3,7 @@
 .. title:: Helm Introduction
 
 -------------------------------
-What is Helm?
+Helm
 -------------------------------
 
 Helm is a package manager for Kubernetes based applications and resources deployment.
@@ -26,9 +26,8 @@ Helm has the following main components (not limited to):
 
   Helm used to be a server-client application. Helm being the client and Tiller server component being installed in a kubernetes cluster. With Helm 3.x onwards, Tiller is removed and only Helm is used for ease.
 
--------------------------------
 Installing Helm 3.x
--------------------------------
+++++++++++++++++++++
 
 Use the following commands to install helm in your Linux Mint VM.
 

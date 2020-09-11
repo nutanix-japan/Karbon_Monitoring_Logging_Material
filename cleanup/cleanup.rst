@@ -9,7 +9,7 @@ Cleanup and Takeaways
 Cleanup
 ++++++++
 
-Cleanup port-forwarding for Prometheus and Grafana. Just `ctrl+c` the commands.
+Cleanup port-forwarding for Prometheus and Grafana. Just **ctrl+c** the commands.
 
 If you have sent these commands to background, you can bring them to foreground by using
 
@@ -33,7 +33,7 @@ Cleanup your namespace. This will also delete all the resources inside the names
 
 .. note::
 
-	**Do not** delete Prometheus implementation in ``ntnx-system`` namespace. Leave it as is.
+	**Do not** delete Prometheus implementation in **ntnx-system** namespace. Leave it as is.
 
 Takeaways
 ++++++++++
