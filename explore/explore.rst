@@ -61,6 +61,10 @@ Let's access the Prometheus UI to check for available metrics.
 
    .. figure:: images/prom-graph.png
 
+#. You can also type in a keyword in the query window and suggestions for available metrics would show. You can see that typing the keyword ``node`` has brought up all available node based metrics.
+
+   .. figure:: images/prom-nodes-search.png
+   
 In day to day operations, most of the metrics made available in the default implementation of Prometheus in Nutanix Karbon deployed kubernetes clusters. Highlight this fact to a customer during a design workshop.
 
 Prometheus Operator
