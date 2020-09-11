@@ -2,9 +2,12 @@
 
 .. title:: Cleaning up your namespace and Grafana installation
 
---------
+------------------------
+Cleanup and Takeaways
+------------------------
+
 Cleanup
---------
+++++++++
 
 Cleanup port-forwarding for Prometheus and Grafana. Just `ctrl+c` the commands.
 
@@ -22,7 +25,7 @@ Cleanup your namespace. This will also delete all the resources inside the names
 
  k config set-context $(k config current-context) --namespace=ntnx-system
 
- helm list #copy your grafana chart name
+ helm list #copy your grafana chart name to use in the next uninstall command
  NAME              	  NAMESPACE  	  REVISION  APP VERSION
  grafana-1597884244	  ntnx-system	  1         7.1.1
 
@@ -32,9 +35,8 @@ Cleanup your namespace. This will also delete all the resources inside the names
 
 	**Do not** delete Prometheus implementation in ``ntnx-system`` namespace. Leave it as is.
 
-----------------
 Takeaways
-----------------
+++++++++++
 
 We have been through implementation and use of kubernetes monitoring and logging in this bootcamp and we can't help but notice that
 this process is quite simple.
