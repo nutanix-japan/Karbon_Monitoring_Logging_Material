@@ -20,10 +20,51 @@ Daemonset makes sure there is an instance of node-exporter po,zd in each node of
 In case the node-exporter pod fails, the kubernetes control loop will replace it with a new node-exporter pod at all times.
 So we are sure that metrics are being collected and uploaded to the Prometheus metrics store.
 
+Exploring Prometheus
+++++++++++++++++++++++++++++
+
+We will now check a few metrics that are collected and exposed by Promethues implementation that comes with Karbon deployed kubernetes clusters
+
+Let's access the Prometheus UI to check for available metrics.
+
+#. Find the Prometheus Service's port number using the following command.
+
+   .. code-block:: bash
+
+    k get svc -n ntnx-system
+
+   .. figure:: images/porm-svc-port.png
+
+#. Now let's forward the port to your Linux Mint VM to be able to access Prometheus UI.
+
+   .. code-block:: bash
+
+    k port-forward svc/prometheus-k8s 9090:9090 &
+
+#. Now you should be able to access Prometheus UI in your Linux Mint VM using the following URL
+
+   .. code-block:: bash
+
+     http://localhost:9090
+
+   .. figure:: images/prom-splash.png
+
+#. Explore available metrics by selecting **insert metric at cursor** drop-down list. Here you will see a list of available metrics.
+
+#. Here I will choose **go_memstats_alloc_bytes** metrics and check if I get any data. Note that the query text-box is now populated with the query **go_memstats_alloc_bytes**
+
+#. Click on **Execute**. You will see the results similar to following figure.
+
+   .. figure:: images/prom-query.png
+
+#. Notice that there is also a **Graph** option in Prometheus GUI for the selected metrics. Click on **Graph** to visualise the chosen metrics.
+
+   .. figure:: images/prom-graph.png
+
 Prometheus Operator
 ++++++++++++++++++++
 
-As we already know Kubernetes has resources like deployments and daemonsets (not limited to) for managing stateless applications, Operators are kubernetes extensions that will allow for stateful applications to be managed. As stateful applications need more domain specific knowledge of scaling, upgrading and reconfiguring, operators provide a way of doing this.
+As we already know Kubernetes has resources such as deployments and daemonsets (not limited to) for managing stateless applications, Operators are kubernetes extensions that will allow for stateful applications to be managed. As stateful applications need more domain specific knowledge of scaling, upgrading and reconfiguring, operators provide a way of doing this.
 
 Operators can be developed individually or obtained from a community maintaining these.
 
