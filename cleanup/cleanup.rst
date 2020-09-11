@@ -1,12 +1,12 @@
 .. _cleanup:
 
-.. title:: Cleaning up your namespace and Istio installation
+.. title:: Cleaning up your namespace and Grafana installation
 
 --------
 Cleanup
 --------
 
-Cleanup port-forwarding for kiali and product-page(of your application). Just `ctrl+c` the commands.
+Cleanup port-forwarding for Prometheus and Grafana. Just `ctrl+c` the commands.
 
 If you have sent these commands to background, you can bring them to foreground by using
 
@@ -18,24 +18,32 @@ Cleanup your namespace. This will also delete all the resources inside the names
 
 .. code-block:: bash
 
- k delete ns -n xyz-ns
+ # change to ``ntnx-system`` to be able to list deployed helm charts in that namespace
 
-Cleanup Istio
+ k config set-context $(k config current-context) --namespace=ntnx-system
 
-.. code-block:: bash
+ helm list #copy your grafana chart name
+ NAME              	  NAMESPACE  	  REVISION  APP VERSION
+ grafana-1597884244	  ntnx-system	  1         7.1.1
 
- k delete ns -n istio-system
+ helm uninstall grafana-1597884244 #this chart name will vary in your implementation
 
+.. note::
+
+	**Do not** delete Prometheus implementation in ``ntnx-system`` namespace. Leave it as is.
 
 ----------------
 Takeaways
 ----------------
 
-We have been through implementation and use of Istio service mesh in this bootcamp and we can't help but notice that
+We have been through implementation and use of kubernetes monitoring and logging in this bootcamp and we can't help but notice that
 this process is quite simple.
 
-- Istio is opensource software and it can be easily deployed in Nutanix Karbon created kubernetes clusters
-- Istio has a control and data plane - all service mesh functionality is implemented by extending kubernetes resources with CRD(s)
-- Istio support announcements can be found `here <https://istio.io/latest/news/support/>`_
-- Applications do not need to Istio-aware leaving developers to focus on the application functionality and quality
-- Istio can be used to have granular control of you application in terms of Security, Monitoring and Traffic management
+- Prometheus is open-source metrics collector
+- Nutanix Karbon deployed kubernetes has a default implementation of Prometheus to monitor the health of kubernetes nodes and appplications
+- It is a good practice to deploy a separate instance of Prometheus to monitor user applications
+- Grafana is a visualisation tool which we could deploy to visualise collected metrics
+- Elastic Stack is open-source logging collector, analyser and visualisation framework
+- Nutanix Karbon deployed kubernetes has a default implementation of Elastic Stack (Elastisearch and Kibana), and Fluent Bit for logs processing
+- Kibana is the log visualisation tool of choice in the Elastic Stack
+- Customer are able to deploy their own instance of Elastic Stack for their applications
