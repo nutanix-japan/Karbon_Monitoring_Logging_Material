@@ -105,7 +105,7 @@ During the creation of the Kubernetes cluster there will have been created:
 Cluster properties
 ++++++++++++++++++
 
-In the Karbon UI, hover over the just created cluster (wordpress in our example) and click on it.
+In the Karbon UI, hover over the just created cluster (**initials-cluster** in our example) and click on it.
 
 .. image:: images/21.png
 
@@ -138,6 +138,6 @@ ___________
 Takeaways
 +++++++++
 
-- Here is where we summarise any key takeaways from the module
-- Such as how a Nutanix feature used in the lab delivers value
-- Or highlighting a differentiator
+- It is quite easy to create a kubernetes cluster using Nutanix Karbon
+- Both Development and Production cluster with different node count options are available
+- Flannel is the only CNI option available in the Karbon GUI. However, Calico is avaialble to configure through REST API calls
