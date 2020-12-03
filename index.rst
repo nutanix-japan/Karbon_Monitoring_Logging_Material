@@ -18,6 +18,8 @@
   :name: _logging_kubernetes
   :hidden:
 
+  logging/logging
+  
 .. toctree::
   :maxdepth: 2
   :caption: Appendix

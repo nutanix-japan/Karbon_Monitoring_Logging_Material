@@ -90,11 +90,48 @@ Install Elasticsearch
     #change default namespace to ELK
     k config set-context --current --namespace=elk
 
+#. If you would like to customise the size of PV and container resources, configure a HELM values file
+
+#. Create a file using the content above and call it ``elastic_values.yaml``
+
+   .. code-block:: bash
+
+    cat <<EOF > elastic_values.yaml
+    ---
+    # Elasticsearch roles that will be applied to this nodeGroup
+    # These will be set as environment variables. E.g. node.master=true
+    roles:
+      master: "true"
+      ingest: "true"
+      data: "true"
+
+    replicas: 3
+    minimumMasterNodes: 1
+
+    # Shrink default JVM heap.
+    esJavaOpts: "-Xmx128m -Xms128m"
+
+    # Allocate smaller chunks of memory per pod.
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "512M"
+      limits:
+        cpu: "1000m"
+        memory: "512M"
+
+    # Request smaller persistent volumes.
+    volumeClaimTemplate:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 30Gi
+
 #. Run the following command to install elasticsearch
 
    .. code-block:: bash
 
-      helm install elasticsearch elastic/elasticsearch
+      helm install elasticsearch elastic/elasticsearch -f elastic_values.yaml
 
       # You will see output as follows:
       # NAME: elasticsearch
@@ -172,7 +209,7 @@ Install Filebeat
 
    .. code-block:: bash
 
-     #cat <<EOF > filebeat_values.yaml
+     cat <<EOF > filebeat_values.yaml
      ---
      extraVolumeMounts:
         - name: varnutanix
@@ -234,6 +271,7 @@ Install Filebeat
      # green open filebeat-7.10.0-2020.12.02-000001 ufD341lKTwin_jpknbOIyA 1 1 2089328   0     1gb 529.1mb
 
 #. This confirms that we are ingesting data into Elasticsearch using filebeat
+
 
 Install Kibana
 ^^^^^^^^^^^^^^^
@@ -320,3 +358,24 @@ Note that the Kibana service is of type ``Cluster IP``. Since we don't have a Lo
 #. On the Overview page, you can see the log rates per minute. This gives you an overview of log production and injection rates.
 
    .. figure:: images/kibana-logsperminute.png
+
+#. Click on the menu and select **Observability > Logs**
+
+#. You will be able to see logs streaming from various sources in your kubernetes clusters
+
+   .. figure:: images/kibana-logs.png
+
+#. You are able to use keyword search and also perform highligthing of text
+
+   .. figure:: images/kibana-logs-search.png
+
+#. Experiment with **Stream Live** and other options
+
+#. You have now successfully setup ELK stack and are able to view logs in Kibana
+
+Takeaways
+^^^^^^^^^^
+- ELK Stack is open-source logging mechanism which can be easily implemented in a kubernete environment
+- ELK Stack is easily configurable for customer's requirements
+- Design aspect is important in planning resource and retention requirement for logs
+- Open-source software like ELK Stack for logging management have limited support but are used widely. Advise the customer of support limitations in using these software
