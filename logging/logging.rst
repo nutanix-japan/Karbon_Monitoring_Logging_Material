@@ -373,6 +373,44 @@ Note that the Kibana service is of type ``Cluster IP``. Since we don't have a Lo
 
 #. You have now successfully setup ELK stack and are able to view logs in Kibana
 
+Cleanup
+^^^^^^^^
+
+Run the following commands to cleanup your ELK Stack implementation.
+
+.. code-block:: bash
+
+  helm uninstall kibana
+  helm uninstall filebeat
+  helm uninstall Elasticsearch
+
+To cleanup physical volumes configured as a part of this lab. You can use the following commands:
+
+.. code-block:: bash
+
+  # Change default namespace to ELK (just to make sure)
+
+  k config set-context --current --namespace=elk
+  k get pvc -n elk
+
+  # Get the names of pvc for elasticsearch master statefulsets
+  # NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS           AGE
+  # elasticsearch-master-elasticsearch-master-0   Bound    pvc-baadcba4-5f26-44e0-93f6-e93dab7a5b82   30Gi       RWO            default-storageclass   59m
+  # elasticsearch-master-elasticsearch-master-1   Bound    pvc-0ee313b4-cd3d-4d55-84cc-53225af92da5   30Gi       RWO            default-storageclass   59m
+
+  k delete pvc <pvc-NAME>
+
+  # Be careful not to delete any other pvc
+  # It may take a while so please be patient
+  # You can specify grace time out period to be   (this is ok in the lab enviroment)
+  # k delete pvc <pvc-NAME> --force --grace-period=0
+
+  # Example:
+  # k delete pvc elasticsearch-master-elasticsearch-master-0
+  # k delete pvc elasticsearch-master-elasticsearch-master-1
+
+  # There is no requirement to delete PV as it will be automatically deleted as defined in the StorageClass settings.
+
 Takeaways
 ^^^^^^^^^^
 - ELK Stack is open-source logging mechanism which can be easily implemented in a kubernete environment
