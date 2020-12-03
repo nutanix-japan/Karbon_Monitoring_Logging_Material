@@ -81,7 +81,7 @@ Install ELK Stack
 We will install the following to get a working implementation of ELK Stack.
 
 Install Elasticsearch
-^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------
 
 #. Create a new namespace for your ELK stack
 
@@ -206,7 +206,7 @@ Install Elasticsearch
 #. We have now installed Elasticsearch
 
 Install Filebeat
-^^^^^^^^^^^^^^^^^^^^^^
+------------------
 
 #. Configure a values file using the following commands: this is required to satisfy Karbon kubernetes cluster and volume mount requirements
 
@@ -277,7 +277,7 @@ Install Filebeat
 
 
 Install Kibana
-^^^^^^^^^^^^^^^
+------------------
 
 #. Run the following command to install Kibana visualisation GUI
 
@@ -329,7 +329,7 @@ Install Kibana
     # statefulset.apps/elasticsearch-master   2/3     3h34m
 
 Accessing Kibana GUI
-^^^^^^^^^^^^^^^^^^^^
+------------------------------------
 
 It is now time to visualise our work and logs.
 
@@ -377,7 +377,7 @@ Note that the Kibana service is of type ``Cluster IP``. Since we don't have a Lo
 #. You have now successfully setup ELK stack and are able to view logs in Kibana
 
 Cleanup
-^^^^^^^^
+------------------
 
 Run the following commands to cleanup your ELK Stack implementation.
 
@@ -415,7 +415,7 @@ To cleanup physical volumes configured as a part of this lab. You can use the fo
   # There is no requirement to delete PV as it will be automatically deleted as defined in the StorageClass settings.
 
 Takeaways
-^^^^^^^^^^
+------------------
 - ELK Stack is open-source logging mechanism which can be easily implemented in a kubernete environment
 - ELK Stack is easily configurable for customer's requirements
 - Design aspect is important in planning resource and retention requirement for logs
