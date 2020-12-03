@@ -8,22 +8,24 @@ Elastic Logging Kibana
 
 In this lab, we will run through setting up logging with `ELK Stack <https://www.elastic.co/what-is/elk-stack>`_ in your Karbon deployed kubernetes cluster using helm. If you haven’t setup Helm, use these :ref:`_helm` instructions to deploy it in your Linux Mint VM.
 
-This setup will collect logs from all Karbon deployed kubernetes nodes (Master, ETCD and Workers).
+This setup will collect logs from all applications deployed in Karbon kubernetes cluster.
 
-- We will also go through setting up logging for an application in a separate namespace
+.. note::
+
+ All logs for kubernetes nodes (Master, ETCD and Workers) are collected by a separate instance of Elastisearch in the ``ntnx-system`` namespace. This is deployed by default in all Karbon kubernetes clusters.
 
 The high level steps included in this lab are:
 
-- Elastisearch installation - `Elasticsearch <https://www.elastic.co/what-is/elasticsearch>`_ is a distributed, open source search and analytics engine for all types of data, including textual, numerical, geospatial, structured, and unstructured.
+- Elasticsearch installation - `Elasticsearch <https://www.elastic.co/what-is/elasticsearch>`_ is a distributed, open source search and analytics engine for all types of data, including textual, numerical, geospatial, structured, and unstructured.
 - Filebeat installation - `Filebeat <https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html#filebeat-overview>`_ is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
 - Kibana installation - `Kibana <https://www.elastic.co/what-is/kibana>`_ is an open source frontend application that sits on top of the Elastic Stack, providing search and data visualization capabilities for data indexed in Elasticsearch.
 
 In a production implementation make sure sufficient thought has been put in for design compoents of Elasticsearch components in terms of
 
 - Log retention which directly affects storage requirements - Physical Volumes (PV)- provisioned by Nutanix Volumes
-  - In this implementation we will use a 100 GB PV (this is customizable)
-- Log rotation (5 days in this implementation)
-- Namespace requirements for ELK - Best to have a new namespace an define resource boundaries
+  - In this implementation we will use a 30 GB PV (this is customizable)
+- Log rotation
+- Namespace requirements for ELK - best to have a new namespace and define resource boundaries
 
 Access your Kubernetes Cluster
 -------------------------------
@@ -31,7 +33,7 @@ Access your Kubernetes Cluster
 #. Logon to your Prism Central **https://<PC VM IP>:9440**
 
    .. note::
-     if you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer here :ref:`karbon_create_cluster`
+     if you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer here :ref:`create_kube`
 
 #. Go to **Menu > Services > Karbon**
 
