@@ -126,6 +126,7 @@ Install Elasticsearch
       resources:
         requests:
           storage: 30Gi
+    EOF
 
 #. Run the following command to install elasticsearch
 
