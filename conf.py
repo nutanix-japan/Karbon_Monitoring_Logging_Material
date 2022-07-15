@@ -35,7 +35,10 @@ import sphinx_fontawesome
 extensions = ['sphinx.ext.todo',
     'sphinx.ext.ifconfig',
     'sphinxcontrib.fulltoc',
-    'sphinx_fontawesome']
+    'sphinx_fontawesome',
+    'sphinx_copybutton',
+    'sphinx.ext.autosectionlabel']
+ #   'sphinx_typo3_theme']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -50,8 +53,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Nutanix Testdrive - Nutanix101'
-copyright = u'2019 Nutanix'
+project = u'Nutanix OCP Bootcamp'
+copyright = u'2022 Nutanix'
 author = u'Nutanix Global Technical Enablement'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -87,8 +90,10 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-#html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_rtd_theme"
 html_theme = 'bootstrap'
+# select the theme
+# html_theme = 'sphinx_typo3_theme'
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
@@ -155,6 +160,14 @@ html_theme_options = {
     #
     # Values: "true" (default) or "false"
     'globaltoc_includehidden': "true",
+
+    # Include previous and next buttons 
+
+    'prev_next_buttons_location': 'bottom',
+
+    # Include sticky navigation
+
+    'sticky_navigation': True,
 
     # HTML navbar class (Default: "navbar") to attach to <div> element.
     # For black navbar, do "navbar navbar-inverse"
