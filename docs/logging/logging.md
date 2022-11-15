@@ -5,12 +5,9 @@ title:: Logging in Karbon Kubernetes Clusters
 # Elastic Logging Kibana
 
 In this lab, we will run through setting up logging with
-`ELK Stack <https://www.elastic.co/what-is/elk-stack>`\_ in your Karbon
-deployed kubernetes cluster using helm. If you haven't setup Helm, use
-these :ref:`_helm` instructions to deploy it in your Linux Mint VM.
+[ELK Stack](https://www.elastic.co/what-is/elk-stack) in your Karbon deployed kubernetes cluster using helm. If you haven't setup Helm, use these :ref:`_helm` instructions to deploy it in your Linux Mint VM.
 
-This setup will collect logs from all applications deployed in Karbon
-kubernetes cluster.
+This setup will collect logs from all applications deployed in Karbon kubernetes cluster.
 
 !!!note
         All logs for kubernetes nodes (Master, ETCD and Workers) are collected by a separate instance of Elastisearch in the `ntnx-system` namespace. This is deployed by default in all Karbon kubernetes clusters.
@@ -23,33 +20,28 @@ The high level steps included in this lab are:
     is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
 -   Kibana installation - [Kibana](https://www.elastic.co/what-is/kibana) is an open source frontend application that sits on top of the Elastic Stack, providing search and data visualization capabilities for data indexed in Elasticsearch.
 
-In a production implementation make sure sufficient thought has been put
-in for design compoents of Elasticsearch components in terms of
+In a production implementation make sure sufficient thought has been put in for design compoents of Elasticsearch components in terms of:
 
--   Log retention which directly affects storage requirements - Physical
-    Volumes (PV)- provisioned by Nutanix Volumes
-    -   In this implementation we will use a 30 GB PV (this is
-        customizable)
+-   Log retention which directly affects storage requirements - Physical Volumes (PV)- provisioned by Nutanix Volumes
+    -   In this implementation we will use a 30 GB PV (this is also customizable)
 -   Log rotation
--   Namespace requirements for ELK - best to have a new namespace and
-    define resource boundaries
-
+-   Namespace requirements for ELK - best to have a new namespace and define resource boundaries
 ## Access your Kubernetes Cluster
 
-1.  Logon to your Prism Central **https://`<PC VM IP>`{=html}:9440**
+1.  Logon to your Prism Central ``https://<PC VM IP>:9440``
 
-    .. note:: if you haven't got a Karbon deployed kubernetes cluster in
-    your HPOC, refer here :ref:`create_kube`
+    !!!note
+            If you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer here :ref:`create_kube`
 
-2.  Go to **Menu \> Services \> Karbon**
+2.  Go to **Menu > Services > Karbon**
 
-    .. figure:: images/choosekarbon.png
+    ![](images/choosekarbon.png)
 
 3.  Select your karbon cluster
 
-4.  Click on Actions \> Download Kubeconfig
+4.  Click on Actions > Download Kubeconfig
 
-    .. figure:: images/selectcluster.png
+    ![](images/selectcluster.png)
 
 5.  Click on **Copy the command to clipboard**
 
@@ -58,48 +50,44 @@ in for design compoents of Elasticsearch components in terms of
 7.  Run the following command to verify your connectivity and display
     the nodes in the cluster
 
-    .. code-block:: bash
-
+    ```bash
+    alias 'k=kubectl'
     k get nodes -o wide
+    ```
 
-    .. figure:: images/nodelist.png
+    ![](images/nodelist.png)
 
 8.  You can list the namespaces, storage claims, physical volumes and
     physical volume claims using the following commands
 
-    .. code-block:: bash
+    ```bash
+    k get ns k get sc,pv,pvc 
+    k get po -n ntnx-system
+    ```
+    ![](images/klistresources.png)
 
-    k get ns k get sc,pv,pvc k get po -n ntnx-system
+    !!!info
+            Nutanix Karbon has automatically provisioned these kubernetes
+            resources so it is ready to use. You have the option to provision
+            additional storage claims, physical volumes, etc by using the Karbon
+            console or using kubectl with YAML files
 
-    .. figure:: images/klistresources.png
+You can also notice that Prometheus pods are running in the `ntnx-system`. We will make use of this Prometheus implementation as a data source for Grafana.
 
-    .. note::
-
-    Nutanix Karbon has automatically provisioned these kubernetes
-    resources so it is ready to use. You have the option to provision
-    additional storage claims, physical volumes, etc by using the Karbon
-    console or using kubectl with YAML files
-
-You can also notice that Prometheus pods are running in the
-`ntnx-system`. We will make use of this Prometheus implementation as a
-data source for Grafana.
-
-Now that you have an understanding of available kubernetes cluster
-resources, go ahead and install ELK Stack.
+Now that you have an understanding of available kubernetes cluster resources, go ahead and install ELK Stack.
 
 ## Install ELK Stack
 
-We will install the following to get a working implementation of ELK
-Stack.
-
-## Install Elasticsearch
+We will install the following to get a working implementation of ELK Stack.
+### Install Elasticsearch
 
 1.  Create a new namespace for your ELK stack
 
-    .. code-block:: bash
-
-    alias 'k=kubectl' k create ns elk #change default namespace to ELK k
+    ```bash
+    alias 'k=kubectl' 
+    k create ns elk #change default namespace to ELK k
     config set-context --current --namespace=elk
+    ```
 
 2.  If you would like to customise the size of PV and container
     resources, configure a HELM values file
@@ -107,63 +95,83 @@ Stack.
 3.  Create a file using the content above and call it
     `elastic_values.yaml`
 
-    .. code-block:: bash
+    ```bash
+    cat <<EOF > elastic_values.yaml
+    ---
+    # Elasticsearch roles that will be applied to this nodeGroup
+    # These will be set as environment variables. E.g. node.master=true
+    roles:
+        master: "true"
+        ingest: "true"
+        data: "true"
 
-      cat \<`<EOF >`{=html} elastic_values.yaml
-      ----------------------------------------------------------------------
-      \# Elasticsearch roles that will be applied to this nodeGroup
-      \# These will be set as environment variables. E.g. node.master=true
-      roles:
-      master: "true"
-      ingest: "true"
-      data: "true"
+    replicas: 3
+    minimumMasterNodes: 1
 
-    replicas: 3 minimumMasterNodes: 1
+    # Shrink default JVM heap.
+    esJavaOpts: "-Xmx128m -Xms128m"
 
-    \# Shrink default JVM heap. esJavaOpts: "-Xmx128m -Xms128m"
+    # Allocate smaller chunks of memory per pod.
+    resources:
+        requests:
+            cpu: "100m"
+            memory: "512M"
+        limits:
+            cpu: "1000m"
+            memory: "512M"
 
-    \# Allocate smaller chunks of memory per pod. resources: requests:
-    cpu: "100m" memory: "512M" limits: cpu: "1000m" memory: "512M"
-
-    \# Request smaller persistent volumes. volumeClaimTemplate:
-    accessModes: \[ "ReadWriteOnce" \] resources: requests: storage:
-    30Gi EOF
+    # Request smaller persistent volumes.
+    volumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+            requests:
+                storage: 30Gi
+    EOF
+    ```
 
 4.  Run the following command to install elasticsearch
 
-    .. code-block:: bash
-
+    ```bash
     helm install elasticsearch elastic/elasticsearch -f
     elastic_values.yaml
-
-    \# You will see output as follows: \# NAME: elasticsearch \# LAST
-    DEPLOYED: Wed Dec 2 10:15:16 2020 \# NAMESPACE: elk \# STATUS:
-    deployed \# REVISION: 1 \# NOTES: \# 1. Watch all cluster members
-    come up. \# \$ k get pods --namespace=elk -l
-    app=elasticsearch-master -w \# 2. Test cluster health using Helm
-    test. \# \$ helm test elasticsearch
+    ```
+    ```bash title="You will see output as follows:"
+    helm install elasticsearch elastic/elasticsearch -f elastic_values.yaml
+    # NAME: elasticsearch
+    # LAST DEPLOYED: Wed Dec  2 10:15:16 2020
+    # NAMESPACE: elk
+    # STATUS: deployed
+    # REVISION: 1
+    # NOTES:
+    # 1. Watch all cluster members come up.
+    #   $ k get pods --namespace=elk -l app=elasticsearch-master -w
+    # 2. Test cluster health using Helm test.
+    #   $ helm test elasticsearch
+    ```
 
 5.  Wait for the command to execute and check logs to make sure all your
     elasticsearch resrouces are running
 
-    .. code-block:: bash
+    ```bash
+    # to check events
+    k get events
 
-    \# to check events k get events
+    # to check all pods and other services are running
+    k get all
 
-    \# to check all pods and other services are running k get all
+    # You will see output as follows:
+    # NAME                             READY   STATUS    RESTARTS   AGE
+    # elasticsearch-master-0           1/1     Running   0          155m
+    # elasticsearch-master-1           1/1     Running   0          155m
+    # elasticsearch-master-2           1/1     Running   0          155m
 
-    \# You will see output as follows: \# NAME READY STATUS RESTARTS AGE
-    \# elasticsearch-master-0 1/1 Running 0 155m \#
-    elasticsearch-master-1 1/1 Running 0 155m \# elasticsearch-master-2
-    1/1 Running 0 155m
-
-    \# NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE \#
-    service/elasticsearch-master ClusterIP 172.19.171.221
-    `<none>`{=html} 9200/TCP,9300/TCP 156m \#
-    service/elasticsearch-master-headless ClusterIP None `<none>`{=html}
-    9200/TCP,9300/TCP 156m \# \# NAME READY AGE \#
-    statefulset.apps/elasticsearch-master 3/3 156m
-
+    # NAME                                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+    # service/elasticsearch-master            ClusterIP   172.19.171.221   <none>        9200/TCP,9300/TCP   156m
+    # service/elasticsearch-master-headless   ClusterIP   None             <none>        9200/TCP,9300/TCP   156m
+    #
+    # NAME                                    READY   AGE
+    # statefulset.apps/elasticsearch-master   3/3     156m
+    ```
 6.  Check the Physical Volumes to get an understanding of what is
     provisioned to to support Elasticsearch and its storage
     requirements - here it is 30 GB in capacity. This can be modified in
