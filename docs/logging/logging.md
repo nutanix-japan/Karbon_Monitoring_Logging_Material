@@ -1,8 +1,8 @@
-.. \_loggin:
+---
+title:: Logging in Karbon Kubernetes Clusters
+---
 
-.. title:: Logging in Karbon Kubernetes Clusters
-
-Elastic Logging Kibana ++++++++++++++++++++++++
+# Elastic Logging Kibana
 
 In this lab, we will run through setting up logging with
 `ELK Stack <https://www.elastic.co/what-is/elk-stack>`\_ in your Karbon
@@ -12,30 +12,16 @@ these :ref:`_helm` instructions to deploy it in your Linux Mint VM.
 This setup will collect logs from all applications deployed in Karbon
 kubernetes cluster.
 
-.. note::
-
-All logs for kubernetes nodes (Master, ETCD and Workers) are collected
-by a separate instance of Elastisearch in the `ntnx-system` namespace.
-This is deployed by default in all Karbon kubernetes clusters.
+!!!note
+        All logs for kubernetes nodes (Master, ETCD and Workers) are collected by a separate instance of Elastisearch in the `ntnx-system` namespace. This is deployed by default in all Karbon kubernetes clusters.
 
 The high level steps included in this lab are:
 
 -   Elasticsearch installation -
-    `Elasticsearch <https://www.elastic.co/what-is/elasticsearch>`\_ is
-    a distributed, open source search and analytics engine for all types
-    of data, including textual, numerical, geospatial, structured, and
-    unstructured.
--   Filebeat installation -
-    `Filebeat <https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html#filebeat-overview>`\_
-    is a lightweight shipper for forwarding and centralizing log data.
-    Installed as an agent on your servers, Filebeat monitors the log
-    files or locations that you specify, collects log events, and
-    forwards them either to Elasticsearch or Logstash for indexing.
--   Kibana installation -
-    `Kibana <https://www.elastic.co/what-is/kibana>`\_ is an open source
-    frontend application that sits on top of the Elastic Stack,
-    providing search and data visualization capabilities for data
-    indexed in Elasticsearch.
+    [Elasticsearch](https://www.elastic.co/what-is/elasticsearch) is a distributed, open source search and analytics engine for all types of data, including textual, numerical, geospatial, structured, and unstructured.
+-   Filebeat [installation](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html#filebeat-overview)
+    is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
+-   Kibana installation - [Kibana](https://www.elastic.co/what-is/kibana) is an open source frontend application that sits on top of the Elastic Stack, providing search and data visualization capabilities for data indexed in Elasticsearch.
 
 In a production implementation make sure sufficient thought has been put
 in for design compoents of Elasticsearch components in terms of

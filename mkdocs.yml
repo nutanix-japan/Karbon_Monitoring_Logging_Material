@@ -88,4 +88,5 @@ nav:
        - 'Exploring Monitoring Resources': explore/explore.md
        - 'Installing Grafana in Karbon': connect/connect.md
        - 'Visualising Metrics in Karbon': visualise/visualise.md
+       - 'Cleanup and Takeaways': cleanup/cleanup.md
 
