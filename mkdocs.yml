@@ -31,7 +31,7 @@ theme:
   features:
   - navigation.instant
   - navigation.tracking
-  - navigation.sections
+  # - navigation.sections # leave this commented for sections
   - navigation.expand
   - navigation.top
   - navigation.integrate
@@ -84,6 +84,8 @@ plugins:
 nav:
     - Home: index.md
     - 'Monitoring':
-        - 'Monitoring in Nutanix Karbon': promgraf/promgraf.md
-        - 'Exploring Monitoring Resources': explore/explore.md
+       - 'Monitoring in Nutanix Karbon': promgraf/promgraf.md
+       - 'Exploring Monitoring Resources': explore/explore.md
+       - 'Installing Grafana in Karbon': connect/connect.md
+       - 'Visualising Metrics in Karbon': visualise/visualise.md
 
