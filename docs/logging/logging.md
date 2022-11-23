@@ -149,8 +149,7 @@ We will install the following to get a working implementation of ELK Stack.
     #   $ helm test elasticsearch
     ```
 
-5.  Wait for the command to execute and check logs to make sure all your
-    elasticsearch resrouces are running
+5.  Wait for the command to execute and check logs to make sure all your elasticsearch resources are running
 
     ```bash
     # to check events
@@ -172,127 +171,96 @@ We will install the following to get a working implementation of ELK Stack.
     # NAME                                    READY   AGE
     # statefulset.apps/elasticsearch-master   3/3     156m
     ```
-6.  Check the Physical Volumes to get an understanding of what is
-    provisioned to to support Elasticsearch and its storage
-    requirements - here it is 30 GB in capacity. This can be modified in
-    the HELM values file.
 
-    .. code-block:: bash \# Check the Physical Volumes created to
-    support Elasticsearch and its storage requirements
+6.  Check the Physical Volumes to get an understanding of what is provisioned to to support Elasticsearch and its storage requirements - here it is 30 GB in capacity. This can be modified in the HELM values file.
 
-    k get pv
-
-    \# There will be three to support the three pods in the StatefulSet
-    \# Note the binding status in the output
-
-    \# NAME CAPACITY ACCESS MODES RECLAIM POLICY STATUS CLAIM
-    STORAGECLASS REASON AGE \# pvc-04302b11-a6e0-459c-8b74-0978f392df07
-    30Gi RWO Delete Bound
-    elk/elasticsearch-master-elasticsearch-master-2 default-storageclass
-    161m \# pvc-141cc537-250d-472e-b686-c7dfafabf29a 30Gi RWO Delete
-    Bound elk/elasticsearch-master-elasticsearch-master-1
-    default-storageclass 161m \#
-    pvc-c8aad9f5-f24c-4e2e-917e-55107e072114 30Gi RWO Delete Bound
-    elk/elasticsearch-master-elasticsearch-master-0 default-storageclass
-
-7.  Check the Physical Volumes Claims to get an understanding of what is
-    provisioned to to support Elasticsearch and its storage requirements
-
-    .. code-block:: bash
-
+    ```bash
     k get pvc
 
-    \# There will be three to support the three volumes - one for each
-    pod and PV
+    # There will be three to support the three volumes - one for each pod and PV
 
-    \# NAME STATUS VOLUME CAPACITY ACCESS MODES STORAGECLASS AGE \#
-    elasticsearch-master-elasticsearch-master-0 Bound
-    pvc-c8aad9f5-f24c-4e2e-917e-55107e072114 30Gi RWO
-    default-storageclass 162m \#
-    elasticsearch-master-elasticsearch-master-1 Bound
-    pvc-141cc537-250d-472e-b686-c7dfafabf29a 30Gi RWO
-    default-storageclass 162m \#
-    elasticsearch-master-elasticsearch-master-2 Bound
-    pvc-04302b11-a6e0-459c-8b74-0978f392df07 30Gi RWO
-    default-storageclass 162m
+    # NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS           AGE
+    # elasticsearch-master-elasticsearch-master-0   Bound    pvc-c8aad9f5-f24c-4e2e-917e-55107e072114   30Gi       RWO            default-storageclass   162m
+    # elasticsearch-master-elasticsearch-master-1   Bound    pvc-141cc537-250d-472e-b686-c7dfafabf29a   30Gi       RWO            default-storageclass   162m
+    # elasticsearch-master-elasticsearch-master-2   Bound    pvc-04302b11-a6e0-459c-8b74-0978f392df07   30Gi       RWO            default-storageclass   162m
 
-    \# Check all the events to make sure there are no klistresources
+    # Check all the events to make sure there are no klistresources
 
     k get events
+    ```
 
 8.  We have now installed Elasticsearch
-
 ## Install Filebeat
 
 1.  Configure a values file using the following commands: this is
     required to satisfy Karbon kubernetes cluster and volume mount
     requirements
 
-    .. code-block:: bash
-
-      cat \<`<EOF >`{=html} filebeat_values.yaml
-      --------------------------------------------
-      extraVolumeMounts:
-      \- name: varnutanix
-      mountPath: /var/nutanix
-      readOnly: true
-      extraVolumes:
-      \- name: varnutanix
-      hostPath:
-      path: /var/nutanix
-      EOF
+    ```bash
+    cat <<EOF > filebeat_values.yaml
+    ---
+    extraVolumeMounts:
+        - name: varnutanix
+          mountPath: /var/nutanix
+          readOnly: true
+    extraVolumes:
+        - name: varnutanix
+          hostPath:
+            path: /var/nutanix
+    EOF
+    ```
 
 2.  Run the following command to install filebeat
 
-    .. code-block:: bash
-
+    ```bash
     helm install elasticsearch elastic/filebeat -f filebeat_values.yaml
+    # You will see output as follows:
 
-    \# You will see output as follows:
-
-    \# NAME: filebeat \# LAST DEPLOYED: Wed Dec 2 10:45:24 2020 \#
-    NAMESPACE: elk \# STATUS: deployed \# REVISION: 1 \# TEST SUITE:
-    None
-
-    \# Note that the filebeat is deployed as a DaemonSet (one on each
-    worker node)
+    # NAME: filebeat
+    # LAST DEPLOYED: Wed Dec  2 10:45:24 2020
+    # NAMESPACE: elk
+    # STATUS: deployed
+    # REVISION: 1
+    # TEST SUITE: None
+    ```
+    ```bash
+    # Note that the filebeat is deployed as a DaemonSet (one on each worker node)
 
     k get all
 
-    \# NAME READY STATUS RESTARTS AGE
+    # NAME                      READY   STATUS              RESTARTS   AGE
 
-    \# filebeat-filebeat-m6hf4 1/1 Running 0 26s \#
-    filebeat-filebeat-72b79 1/1 Running 0 26s
+    # filebeat-filebeat-m6hf4   1/1     Running             0          26s
+    # filebeat-filebeat-72b79   1/1     Running             0          26s
 
-    \# NAME DESIRED CURRENT READY UP-TO-DATE AVAILABLE NODE SELECTOR AGE
-    \# daemonset.apps/filebeat-filebeat 2 2 2 2 2 `<none>`{=html} 3h4m
+    # NAME                               DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+    # daemonset.apps/filebeat-filebeat   2         2         2       2            2           <none>          3h4m
+    ```
 
-3.  We have now installed Filebeat and it will start collecting logs
-    from all Karbon deployed kubenetes nodes
+3.  We have now installed Filebeat and it will start collecting logs from all Karbon deployed kubenetes nodes
 
 4.  To verify if Filebeat is setup properly to receive logs from
-    kubernetes nodes and containers, check the data ingestion stats of
+     kubernetes nodes and containers, check the data ingestion stats of
     Elastisearch ClusterIP service
 
 5.  Port-foward Elasticsearch Services IP to your local machine
 
-    .. code-block:: bash
-
+    ```bash
     k port-forward service/elasticsearch-master 9200:9200 &
+    ```
 
 6.  Run curl command to see the data indices ingestion details
 
-    .. code-block:: bash
+    ```bash
+    curl -l "localhost:9200/_cat/indices?pretty&s=i"
+    ```
+    ```bash
+    # The output looks as follows and data ingest details are in the last two columns
 
-    curl -l "localhost:9200/\_cat/indices?pretty&s=i"
+    # Observe the filebeat line
 
-    \# The output looks as follows and data ingest details are in the
-    last two columns
-
-    \# Observe the filebeat line
-
-    \# green open filebeat-7.10.0-2020.12.02-000001
-    ufD341lKTwin_jpknbOIyA 1 1 2089328 0 1gb 529.1mb
+    # green open filebeat-7.10.0-2020.12.02-000001 ufD341lKTwin_jpknbOIyA 1 1 2089328   0     1gb 529.1mb
+    ```
 
 7.  This confirms that we are ingesting data into Elasticsearch using
     filebeat
@@ -301,46 +269,26 @@ We will install the following to get a working implementation of ELK Stack.
 
 1.  Run the following command to install Kibana visualisation GUI
 
-    .. code-block:: bash
-
-    \$ helm install kibana elastic/kibana
-
-    \# You will see the following output
-
-    \# NAME: kibana \# LAST DEPLOYED: Wed Dec 2 10:47:10 2020 \#
-    NAMESPACE: elk \# STATUS: deployed \# REVISION: 1 \# TEST SUITE:
-    None
+    ```bash
+    $ helm install kibana elastic/kibana
+    ```
+    ```bash
+    # You will see the following output
+    # NAME: kibana
+    # LAST DEPLOYED: Wed Dec  2 10:47:10 2020
+    # NAMESPACE: elk
+    # STATUS: deployed
+    # REVISION: 1
+    # TEST SUITE: None
+    ```
 
 2.  Now that we have installed all three necessary service in ELK stack,
     let us confirm that they are all ready and running.
 
-    .. code-block:: #!/usr/bin/env bash
-
+    ```bash
     k get all
-
-    \# Note all the pods, services and other resources for ELK Stack \#
-    Make sure they are all running without issues
-
-    \# NAME READY STATUS RESTARTS AGE \# pod/elasticsearch-master-0 1/1
-    Running 0 3h34m \# pod/elasticsearch-master-1 1/1 Running 0 3h34m \#
-    pod/elasticsearch-master-2 1/1 Running 0 3h34m \#
-    pod/filebeat-filebeat-72b79 1/1 Running 0 3h4m \#
-    pod/filebeat-filebeat-m6hf4 1/1 Running 0 3h4m \#
-    pod/kibana-kibana-5b4c966bc9-z65s5 1/1 Running 0 3h2m \# \# NAME
-    TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE \#
-    service/elasticsearch-master ClusterIP 172.19.171.221
-    `<none>`{=html} 9200/TCP,9300/TCP 3h34m \#
-    service/elasticsearch-master-headless ClusterIP None `<none>`{=html}
-    9200/TCP,9300/TCP 3h34m \# service/kibana-kibana ClusterIP
-    172.19.118.48 `<none>`{=html} 5601/TCP 3h2m \# \# NAME DESIRED
-    CURRENT READY UP-TO-DATE AVAILABLE NODE SELECTOR AGE \#
-    daemonset.apps/filebeat-filebeat 2 2 2 2 2 `<none>`{=html} 3h4m \#
-    \# NAME READY UP-TO-DATE AVAILABLE AGE \#
-    deployment.apps/kibana-kibana 1/1 1 1 3h2m \# \# NAME DESIRED
-    CURRENT READY AGE \# replicaset.apps/kibana-kibana-5b4c966bc9 1 1 1
-    3h2m \# \# NAME READY AGE \# statefulset.apps/elasticsearch-master
-    2/3 3h34m
-
+    ```
+    
 ## Accessing Kibana GUI
 
 It is now time to visualise our work and logs.
@@ -352,90 +300,94 @@ ClusterIP service to our workstation LinuxMintVM.
 1.  Run the following command to port forward Kibana service. You are
     able to find the port number by listing Kibana service.
 
-    .. code-block:: bash
-
+    ```bash
     k get svc/kibana-kibana
+    ```
+    ```bash title="Find the port number of the Kibana service"
+    # output
+    # service/kibana-kibana                   ClusterIP   172.19.118.48    <none>        5601/TCP            3h2m
 
-    \# service/kibana-kibana ClusterIP 172.19.118.48 `<none>`{=html}
-    5601/TCP 3h2m \# Here the service port number is `5601`
-
+    # Here the service port number is ``5601``
+    ```
+    ```bash title="Forward the port to your local machine"
     k port-forward svc/kibana-kibana 5601:5601 &
+    ```
 
-2.  Open a browser window on the workstation and access the following
-    URL
+2.  Open a browser window on the workstation and access the following URL
 
-    `http://localhost:5601`
+    ```url
+    http://localhost:5601
+    ```
 
 3.  You will see Kibana GUI
 
-    .. figure:: images/kibana-splash.png
+    ![](images/kibana-splash.png)
 
-4.  Click on the menu and select **Observability \> Overview**
+4.  Click on the menu and select **Observability > Overview**
 
-    .. figure:: images/kibana-menu.png
+    ![](images/kibana-menu.png)
 
 5.  On the Overview page, you can see the log rates per minute. This
     gives you an overview of log production and injection rates.
 
-    .. figure:: images/kibana-logsperminute.png
+    ![](images/kibana-logsperminute.png)
 
-6.  Click on the menu and select **Observability \> Logs**
+6.  Click on the menu and select **Observability > Logs**
 
 7.  You will be able to see logs streaming from various sources in your
     kubernetes clusters
 
-    .. figure:: images/kibana-logs.png
+    ![](images/kibana-logs.png)
 
 8.  You are able to use keyword search and also perform highligthing of
     text
 
-    .. figure:: images/kibana-logs-search.png
+    ![](images/kibana-logs-search.png)
 
 9.  Experiment with **Stream Live** and other options
 
-10. You have now successfully setup ELK stack and are able to view logs
-    in Kibana
+10. You have now successfully setup ELK stack and are able to view logs in Kibana
 
 ## Cleanup
 
 Run the following commands to cleanup your ELK Stack implementation.
 
-.. code-block:: bash
-
-helm uninstall kibana helm uninstall filebeat helm uninstall
-Elasticsearch
+```bash
+helm uninstall kibana 
+helm uninstall filebeat 
+helm uninstall Elasticsearch
+```
 
 To cleanup physical volumes configured as a part of this lab. You can
 use the following commands:
 
-.. code-block:: bash
+```bash
+# Change default namespace to ELK (just to make sure)
+k config set-context --current --namespace=elk
+```
+```bash
+k get pvc -n elk
+# Get the names of pvc for elasticsearch master statefulsets
+# NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS           AGE
+# elasticsearch-master-elasticsearch-master-0   Bound    pvc-baadcba4-5f26-44e0-93f6-e93dab7a5b82   30Gi       RWO            default-storageclass   59m
+# elasticsearch-master-elasticsearch-master-1   Bound    pvc-0ee313b4-cd3d-4d55-84cc-53225af92da5   30Gi       RWO            default-storageclass   59m
+```
+```bash
+k delete pvc <pvc-NAME>
 
-\# Change default namespace to ELK (just to make sure)
+# Be careful not to delete any other pvc
+# It may take a while so please be patient
+# You can specify grace time out period to be   (this is ok in the lab enviroment)
+# k delete pvc <pvc-NAME> --force --grace-period=0
 
-k config set-context --current --namespace=elk k get pvc -n elk
+# Example:
+# k delete pvc elasticsearch-master-elasticsearch-master-0
+# k delete pvc elasticsearch-master-elasticsearch-master-1
 
-\# Get the names of pvc for elasticsearch master statefulsets \# NAME
-STATUS VOLUME CAPACITY ACCESS MODES STORAGECLASS AGE \#
-elasticsearch-master-elasticsearch-master-0 Bound
-pvc-baadcba4-5f26-44e0-93f6-e93dab7a5b82 30Gi RWO default-storageclass
-59m \# elasticsearch-master-elasticsearch-master-1 Bound
-pvc-0ee313b4-cd3d-4d55-84cc-53225af92da5 30Gi RWO default-storageclass
-59m
+# There is no requirement to delete PV as it will be automatically deleted as defined in the StorageClass settings.
+```
 
-k delete pvc `<pvc-NAME>`{=html}
-
-\# Be careful not to delete any other pvc \# It may take a while so
-please be patient \# You can specify grace time out period to be (this
-is ok in the lab enviroment) \# k delete pvc `<pvc-NAME>`{=html} --force
---grace-period=0
-
-\# Example: \# k delete pvc elasticsearch-master-elasticsearch-master-0
-\# k delete pvc elasticsearch-master-elasticsearch-master-1
-
-\# There is no requirement to delete PV as it will be automatically
-deleted as defined in the StorageClass settings.
-
-## Takeaways
+## Takeaways    
 
 -   ELK Stack is open-source logging mechanism which can be easily
     implemented in a kubernete environment

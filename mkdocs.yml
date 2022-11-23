@@ -83,6 +83,7 @@ plugins:
 
 nav:
     - Home: index.md
+    - 'Create a Karbon K8S cluster': appendix/create_kube.md
     - 'Monitoring':
        - 'Monitoring in Nutanix Karbon': promgraf/promgraf.md
        - 'Exploring Monitoring Resources': explore/explore.md
@@ -90,4 +91,7 @@ nav:
        - 'Visualising Metrics in Karbon': visualise/visualise.md
        - 'Cleanup and Takeaways': cleanup/cleanup.md
     - 'Logging': logging/logging.md
+    - 'Appendix': 
+        - 'Helm': appendix/helm.md
+        
 
