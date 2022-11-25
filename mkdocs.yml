@@ -83,15 +83,18 @@ plugins:
 
 nav:
     - Home: index.md
-    - 'Create a Karbon K8S cluster': appendix/create_kube.md
+    - 'Creating a Karbon K8S cluster': appendix/create_kube.md
     - 'Monitoring':
        - 'Monitoring in Nutanix Karbon': promgraf/promgraf.md
        - 'Exploring Monitoring Resources': explore/explore.md
        - 'Installing Grafana in Karbon': connect/connect.md
        - 'Visualising Metrics in Karbon': visualise/visualise.md
-       - 'Cleanup and Takeaways': cleanup/cleanup.md
-    - 'Logging': logging/logging.md
+       - 'Cleaning up and Takeaways': cleanup/cleanup.md
+    - 'Logging': 
+       - 'Logging in Nutanix Karbon': logging/logging.md
     - 'Appendix': 
+        - 'Creating Linux Tools VM': appendix/linux_tools_vm.md
         - 'Helm': appendix/helm.md
+        
         
 

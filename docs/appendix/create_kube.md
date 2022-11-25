@@ -9,8 +9,8 @@ Kubernetes cluster first. The cluster that we are ging to create
 consists out of the following VMs:
 
 -   1 Master node (VM)
--   1 Worker node (VMs)
--   1 etcd nodes (VMs)
+-   1 Worker node (VM)
+-   1 etcd nodes (VM)
 
 !!!info
         For more information on the terms master, worker and etcd, please look at https://kubernetes.io/docs/concepts/.
@@ -32,7 +32,7 @@ consists out of the following VMs:
 4. Provide the required parameters that are asked for in the wizard. The following screenshots can be used as a guideline
 
     !!!tip
-          You can also hover over the **?** sign to get more information.
+          You can also hover over the **?** sign to get more information about each configuration option.
 
 3. Choose Development Cluster
 

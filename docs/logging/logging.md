@@ -5,7 +5,7 @@ title:: Logging in Karbon Kubernetes Clusters
 # Elastic Logging Kibana
 
 In this lab, we will run through setting up logging with
-[ELK Stack](https://www.elastic.co/what-is/elk-stack) in your Karbon deployed kubernetes cluster using helm. If you haven't setup Helm, use these :ref:`_helm` instructions to deploy it in your Linux Mint VM.
+[ELK Stack](https://www.elastic.co/what-is/elk-stack) in your Karbon deployed kubernetes cluster using helm. If you haven't setup Helm, use these Helm [instructions](../appendix/helm.md) to deploy it in your Linux Mint VM.
 
 This setup will collect logs from all applications deployed in Karbon kubernetes cluster.
 

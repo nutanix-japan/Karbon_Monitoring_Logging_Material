@@ -2,25 +2,25 @@
 title: Installing Grafana in Karbon
 ---
 
-In this exercise we will install Grafana into the same `ntnx-system`
+In this exercise we will install Grafana into the same ``ntnx-system``
 namespace using Helm. If you haven't got Helm deployed use these
-:ref:`_helm` instructions to deploy it in your Linux Mint VM
+ [instructions](../appendix/helm.md) to deploy it in your Linux Mint VM
 
 ## Overview 
 
 1.  Create a Linux Mint VM (If one is not deployed already please use
-    the instructions here :ref:`linuxmint_tools_vm` to deploy one)
+    the instructions here  to deploy one)
 2.  Connect to Linux Mint VM and install kubectl tool
 3.  Access you Karbon page and download KUBECONFIG file to Linux Mint VM
-4.  Install Grafana into `ntnx-system` namespace
+4.  Install Grafana into ``ntnx-system`` namespace
 
 ## Connect to your LinuxMintVM 
 
-1.  Logon to your LinuxMint VM console as `nutanix` user (default
-    password) and open terminal
+1.  Logon to your LinuxMint VM console as ``nutanix`` user (default
+    password) and open terminal.
 
-    !!!note
-           If you are using your PC/Mac you can also ssh/putty to your LinuxMint VM
+    !!!info
+           If you are using your PC/Mac you can also ssh/putty to your Linux Tools VM
 
     ```bash
     ssh -l nutanix <LinuxMint VM IP address>
@@ -46,8 +46,8 @@ namespace using Helm. If you haven't got Helm deployed use these
 
 1.  Logon to your Prism Central **https://`<PC VM IP>:9440**
 
-    !!!note
-            If you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer here :ref:`karbon_create_cluster`
+    !!!caution
+            If you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer [here](../appendix/create_kube.md) to create it before proceeding with this section of the lab.
 
 2.  Go to **Menu > Services > Karbon**
 
@@ -105,25 +105,24 @@ resources, go ahead and install Grafana.
     --set service.type=NodePort
     ```
 
-    !!!note::
+    !!!note
+            You can notice that we have used the `set` argument to reserve 10
+            GiB for Grafana to store dashboards. This is more than enough for
+            this lab. In production environment administrators will make a
+            design decision about these parameters
 
-    You can notice that we have used the `set` argument to reserve 10
-    GiB for Grafana to store dashboards. This is more than enough for
-    this lab. In production environment administrators will make a
-    design decision about these parameters
-
-    You will see output similar to this. Run the commands in the output
-    to get Grafana password. Note that this output will be different for
-    you.
+            You will see output similar to this. Run the commands in the output
+            to get Grafana password. Note that this output will be different for
+            you.
 
     ![](images/install-graf.png)
 
-2.  Now lets get the password for Grafana implementation using which we
+2.  Now let's get the password for Grafana implementation using which we
     can logon to Grafana console
 
     ```bash
     k get secret --namespace ntnx-system grafana-1597884244 -o
-    jsonpath="{.data.admin-password}" \| base64 --decode ; echo
+    jsonpath="{.data.admin-password}" | base64 --decode ; echo
     ```
 
 3.  To find the nodeport and access URL for Grafana, execute the

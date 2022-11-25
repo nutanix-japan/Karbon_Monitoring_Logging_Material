@@ -45,7 +45,7 @@ various other data sources. Grafana has a rich ecosystem and integration
 with services from various cloud monitoring tools like Amazon
 Cloudwatch, MS Azure, etc.
 
-**Source**: [Grafana](https://grafana.com/oss/grafana/)_
+**Source**: [Grafana](https://grafana.com/oss/grafana/)
 
 You can think of Prometheus as a metrics input system for Grafana as shown below:
 

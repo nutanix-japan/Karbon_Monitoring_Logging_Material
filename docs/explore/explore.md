@@ -6,7 +6,9 @@ title: Exploring Monitoring Resources
 
 In this section we will explore the `ntnx-system` namespace in a given
 Nutanix Karbon deployed kubernetes cluster and its resources in terms of
-Prometheus monitoring
+Prometheus monitoring.
+
+If you have not got the Karbon K8S cluster deployed already, please use the deployment instructions [here](../appendix/create_kube.md) to deploy it before proceeding to the next section.
 
 ## Node Exporter 
 
