@@ -80,5 +80,6 @@ In this section we will configure a grafana.com dashboard.
 
     ![](images/granfana-com.png)
 
-You have now completed this section of configuring dashboards in
-Grafana.
+Nutanix Karbon comes with the Prometheus instance installed and collecting information about the kubernetes. You just have to use this as a data source and visualise it in Grafana. 
+
+You have now completed this section of configuring dashboards in Grafana. 

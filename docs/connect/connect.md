@@ -24,23 +24,61 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
     
 ## Install Grafana 
 
-1.  Create a values files to instruct Helm chart to use ``default`` service account
+1.  Add the helm repos of Grafana
+
     ```bash
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo update
+    ```
+
+1.  We will chech which tool we should add for Grafana from the repo
+
+    ```bash
+    helm search repo grafana
+    ``` 
+    ```text hl_lines="2" title="Output - we can see that we need to use the first tool"
+    NAME                                	CHART VERSION	APP VERSION      	DESCRIPTION                                       
+    grafana/grafana                     	6.44.11      	9.3.0            	The leading tool for querying and visualizing t...
+    grafana/grafana-agent-operator      	0.2.8        	0.28.0           	A Helm chart for Grafana Agent Operator           
+    grafana/enterprise-logs             	2.4.2        	v1.5.2           	Grafana Enterprise Logs                           
+    grafana/enterprise-logs-simple      	1.2.1        	v1.4.0           	DEPRECATED Grafana Enterprise Logs (Simple Scal...
+    grafana/enterprise-metrics          	1.9.0        	v1.7.0           	DEPRECATED Grafana Enterprise Metrics             
+    grafana/fluent-bit                  	2.3.2        	v2.1.0           	Uses fluent-bit Loki go plugin for gathering lo...
+    grafana/loki                        	3.5.0        	2.6.1            	Helm chart for Grafana Loki in simple, scalable...
+    grafana/loki-canary                 	0.10.0       	2.6.1            	Helm chart for Grafana Loki Canary                
+    grafana/loki-distributed            	0.66.4       	2.6.1            	Helm chart for Grafana Loki in microservices mode 
+    grafana/loki-simple-scalable        	1.8.11       	2.6.1            	Helm chart for Grafana Loki in simple, scalable...
+    grafana/loki-stack                  	2.8.7        	v2.6.1           	Loki: like Prometheus, but for logs.              
+    grafana/mimir-distributed           	3.3.0        	2.4.0            	Grafana Mimir                                     
+    grafana/mimir-openshift-experimental	2.1.0        	2.0.0            	Grafana Mimir on OpenShift Experiment             
+    grafana/oncall                      	1.0.12       	v1.1.0           	Developer-friendly incident response with brill...
+    grafana/phlare                      	0.1.1        	0.1.0            	horizontally-scalable, highly-available, mul...
+    grafana/promtail                    	6.6.3        	2.6.1            	Promtail is an agent which ships the contents o...
+    grafana/rollout-operator            	0.2.0        	v0.2.0           	Grafana rollout-operator                          
+    grafana/synthetic-monitoring-agent  	0.1.0        	v0.9.3-0-gcd7aadd	Grafanas Synthetic Monitoring application. The...
+    grafana/tempo                       	0.16.6       	1.5.0            	Grafana Tempo Single Binary Mode                  
+    grafana/tempo-distributed           	0.27.10      	1.5.0            	Grafana Tempo in MicroService mode                
+    grafana/tempo-vulture               	0.2.1        	1.3.0            	Grafana Tempo Vulture - A tool to monitor Tempo...
+    ```
+
+3.  Create a values files to instruct Helm chart to use ``default`` service account and specify other parameters of install
+
+    ```bash hl_lines="4 8 11"
     cat << EOF > values.yaml
     serviceAccount:
       create: false
-      name: default
+      name: default # >> The namespace's default sa will be used to install Grafana
     persistence:
       type: pvc
       enabled: true
-      size: 10Gi
+      size: 10Gi  # >> Grafana will use this 10 Gi storage  
     service:
       enabled: true
-      type: NodePort
+      type: NodePort # >> Grafana will be available on a NodePort
     EOF
     ```
 
-2.  Install Grafana using Helm and using ``values.yaml`` file
+4.  Install Grafana using Helm and using ``values.yaml`` file
 
     ```bash
     helm install grafana/grafana --generate-name --namespace ntnx-system \
@@ -53,7 +91,7 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
     !!!tip
             In case there are issues with downloading the pod from Docker hub, follow the instructions [here](../appendix/privatereg.md) to set your service account of choice to use a Docker registry secret containing your Docker public hub credentials.
 
-2.  Now let's get the password for Grafana implementation using which we can logon to Grafana console
+5.  Now let's get the password for Grafana implementation using which we can logon to Grafana console
     
     ```bash 
     kubectl get secret --namespace grafana grafana-1669965734 \
@@ -63,7 +101,7 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
     waeIaO6AuKWW2x7aqnOyzCRnU6GIVQRvDLltm2Qr
     ```
 
-3.  Get the Grafana URL to visit by running these commands in the same shell
+6.  Get the Grafana URL to visit by running these commands in the same shell
 
     ```bash title=""
     export NODE_PORT=$(kubectl get --namespace grafana -o jsonpath="{.spec.ports[0].nodePort}" services grafana-1669965734)
