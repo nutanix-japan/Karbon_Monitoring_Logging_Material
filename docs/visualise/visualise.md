@@ -31,7 +31,7 @@ Let's check the load per cpu in the Karbon kubernetes nodes
 
     ![](images/promql-panel-title.png)
 
-5.  Click on **Save** and **Apply**
+5.  Click on **Save** and **Apply** on the top right hand corner of the pages
 
 6.  Confirm creation of panel and dashboard in the main window
 
