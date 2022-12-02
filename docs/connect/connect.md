@@ -44,14 +44,14 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
 
     ```bash
     helm install grafana/grafana --generate-name --namespace ntnx-system \
-    --set persistence.enabled=true,persistence.type=pvc,persistence.size=10Gi \
-    --set service.type=NodePort -v values.yaml
+    -f values.yaml
     ```
+    You will see command output as follows:
 
     ![](images/install-graf.png)
 
-    !!!info
-            In case there are issues with downloading the pod from Docker hub, follow the instructions [here](../appendix/privatereg.md) to set your service account of choice to use a registry secret.
+    !!!tip
+            In case there are issues with downloading the pod from Docker hub, follow the instructions [here](../appendix/privatereg.md) to set your service account of choice to use a Docker registry secret containing your Docker public hub credentials.
 
 2.  Now let's get the password for Grafana implementation using which we can logon to Grafana console
     

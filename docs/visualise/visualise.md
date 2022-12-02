@@ -10,17 +10,20 @@ As discussed in the previous section all Prometheus collected metrics can be que
 
 Let's check the load per cpu in the Karbon kubernetes nodes
 
-1.  In Grafana UI; Click on **+** and **Dashboard**
+1.  In Grafana UI; Click on items(four little boxes) and **+New Dashboard**
 
     ![](images/new-db-graf.png)
 
 2.  Click on **+ Add new panel**
 
-    Query to use with the dashboard:
+3.  Confirm **Prometheus** is the data source
+
+3.  In the **Metrics** drop-down enter the following
 
     ```bash
     instance:node_load1_per_cpu:ratio
     ```
+    ![](images/metrics-cpu.png)
 
 3.  In the **New dashboard / Edit panel window** paste the query from above in the Metrics field
 
@@ -28,7 +31,7 @@ Let's check the load per cpu in the Karbon kubernetes nodes
 
     ![](images/promql-panel-title.png)
 
-5.  Click on **Save**
+5.  Click on **Save** and **Apply**
 
 6.  Confirm creation of panel and dashboard in the main window
 
