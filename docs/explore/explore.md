@@ -2,6 +2,90 @@
 title: Exploring Monitoring Resources
 ---
 
+# Exploring Monitoring Resources
+
+In this exercise we will explore Prometheus into the same ``ntnx-system`` namespace using Helm. 
+
+If you haven't got Helm deployed use these [instructions](../appendix/helm.md) to deploy it in your Linux Tools VM.
+## Overview 
+
+1.  Create a Linux Tools VM (If one is not deployed already please use the instructions [here](../appendix/linux_tools_vm.md) to deploy one)
+2.  Connect to Linux Tools VM and install kubectl tool
+3.  Access you Karbon page and download KUBECONFIG file to Linux Tools VM
+4.  Explore Grafana into ``ntnx-system`` namespace
+## Connect to your Linux Tools VM 
+
+1.  Logon to your Linux Tools VM console as ``root`` user (default password) and open terminal.
+
+    !!!info
+           If you are using your PC/Mac you can also ssh/putty to your Linux Tools VM
+
+    ```bash
+    ssh -l root <Linux Tools VM IP address>
+    ```
+
+2.  Paste the command in clipboard to the shell in your Linux Tools VM to install kubectl
+
+    ```bash
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    ```
+
+3.  Verify your kubectl installation
+
+    ```bash
+    alias 'k=kubectl' 
+    k version --client
+    ```
+
+## Access your Kubernetes Cluster
+
+1.  Logon to your Prism Central ``https://PC-VM-IP:9440``
+
+    !!!caution
+              If you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer [here](../appendix/create_kube.md) to create it before proceeding with this section of the lab.
+
+2.  Go to **Menu > Services > Karbon**
+
+    ![](images/choosekarbon.png)
+
+3.  Select your karbon cluster
+
+4.  Click on **Actions > Download Kubeconfig**
+
+    ![](images/selectcluster.png)
+
+5.  Click on **Copy the command to clipboard**
+
+6.  Paste the contents in your Linux Tools VM shell
+
+7.  Run the following command to verify your connectivity and display
+    the nodes in the cluster
+
+    ```bash
+    k get nodes -o wide
+    ```
+
+    ![](images/nodelist.png)
+
+8.  You can list the namespaces, storage claims, physical volumes and
+    physical volume claims using the following commands
+
+    ```bash
+    k get ns k get sc,pv,pvc k get po -n ntnx-system
+    ```
+
+    ![](images/klistresources.png)
+
+    !!!note 
+            Nutanix Karbon has automatically provisioned these kubernetes
+            resources so it is ready to use. You have the option to provision
+            additional storage claims, physical volumes, etc by using the Karbon
+            console or using kubectl with YAML files
+
+You can also notice that Prometheus pods are running in the ``ntnx-system``. We will make use of this Prometheus implementation as a data source for Grafana.
+
+Now that you have an understanding of available kubernetes cluster resources, go ahead and install Grafana.
 # Exploring Prometheus in Karbon
 
 In this section we will explore the `ntnx-system` namespace in a given

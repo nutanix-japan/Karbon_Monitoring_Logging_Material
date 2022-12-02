@@ -93,8 +93,9 @@ nav:
     - 'Logging': 
        - 'Logging in Nutanix Karbon': logging/logging.md
     - 'Appendix': 
-        - 'Creating Linux Tools VM': appendix/linux_tools_vm.md
-        - 'Helm': appendix/helm.md
+       - 'Creating Linux Tools VM': appendix/linux_tools_vm.md
+       - 'Helm': appendix/helm.md
+       - 'Using Public Container Registry Credentials': appendix/privatereg.md
         
         
 
