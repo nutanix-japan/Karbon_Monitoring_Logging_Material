@@ -17,18 +17,17 @@ fg
 Cleanup your namespace. This will also delete all the resources inside
 the namespace.
 
-```bash
-# change to ntnx-system to be able to list deployed helm charts in that namespace
+```bash title="Change to ntnx-system to be able to list deployed helm charts in that namespace"
 k config set-context $(k config current-context) --namespace=ntnx-system
 ```
-```bash
+```bash title="Copy your grafana chart name to use in the next uninstall command"
 helm list  
 NAME NAMESPACE REVISION APP VERSION 
-grafana-1597884244  #copy your grafana chart name to use in the next uninstall command
+grafana-1597884244  
 ntnx-system 1 7.1.1
 ```
-```bash
-helm uninstall grafana-1597884244 #this chart name will vary in your implementation
+```bash title="This chart name will vary in your implementation"
+helm uninstall grafana-1597884244 
 ```
 
 !!!note

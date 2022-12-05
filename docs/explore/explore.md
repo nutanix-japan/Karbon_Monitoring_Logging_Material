@@ -208,6 +208,5 @@ Nutanix's very own DevOps Architect Christophe Jauffret has written a
 great article [here](https://medium.com/@christophe_99995/applications-metrics-monitoring-on-nutanix-karbon-c1d1158ebcfc) to deploy a separate instance of Prometheus to monitor user applications over here. You could recommend this method to a prospective customer.
 
 !!!note
-        The steps in the Christophe's article above will work in your lab
-        environment. This might take up to 45 minutes. Please only do this if
-        you have extra time in this session.
+        The steps in the Christophe's article above will work in your lab environment. This might take up to 45 minutes. Please only do this if you have extra time in this session.
+

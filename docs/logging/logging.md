@@ -5,11 +5,11 @@ title:: Logging in Karbon Kubernetes Clusters
 # Elastic Logging Kibana
 
 In this lab, we will run through setting up logging with
-[ELK Stack](https://www.elastic.co/what-is/elk-stack) in your Karbon deployed kubernetes cluster using helm. If you haven't setup Helm, use these Helm [instructions](../appendix/helm.md) to deploy it in your Linux Mint VM.
+[ELK Stack](https://www.elastic.co/what-is/elk-stack) in your Karbon deployed kubernetes cluster using Helm. If you haven't setup Helm, use these Helm [instructions](../appendix/helm.md) to deploy it in your Linux Tools VM.
 
 This setup will collect logs from all applications deployed in Karbon kubernetes cluster.
 
-!!!note
+!!!info
         All logs for kubernetes nodes (Master, ETCD and Workers) are collected by a separate instance of Elastisearch in the `ntnx-system` namespace. This is deployed by default in all Karbon kubernetes clusters.
 
 The high level steps included in this lab are:
@@ -20,24 +20,36 @@ The high level steps included in this lab are:
     is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
 -   Kibana installation - [Kibana](https://www.elastic.co/what-is/kibana) is an open source frontend application that sits on top of the Elastic Stack, providing search and data visualization capabilities for data indexed in Elasticsearch.
 
-In a production implementation make sure sufficient thought has been put in for design compoents of Elasticsearch components in terms of:
+In a production implementation make sure sufficient thought has been put in for design components of Elasticsearch in terms of:
 
--   Log retention which directly affects storage requirements - Physical Volumes (PV)- provisioned by Nutanix Volumes
-    -   In this implementation we will use a 30 GB PV (this is also customizable)
+-   Log retention which directly affects storage requirements 
+    - Physical Volumes (PV) - provisioned by Nutanix Volumes
+    - In this implementation we will use a 30 GB PV (this is also customizable)
 -   Log rotation
--   Namespace requirements for ELK - best to have a new namespace and define resource boundaries
-## Access your Kubernetes Cluster
+-   Namespace requirements for ELK - it is best to have a separate namespace for logging implementation and define resource boundaries
+
+## Connect to your Linux Tools VM 
+
+1.  Logon to your Linux Tools VM console as ``root`` user (default password) and open terminal.
+
+    !!!info
+           If you are using your PC/Mac you can also putty/ssh to your Linux Tools VM
+
+    ```bash
+    ssh -l root <Linux Tools VM IP address>
+    ```
+## Access your Karbon Kubernetes Cluster
 
 1.  Logon to your Prism Central ``https://<PC VM IP>:9440``
 
     !!!note
-            If you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer here :ref:`create_kube`
+            If you haven't got a Karbon deployed kubernetes cluster in your HPOC, refer [here](../appendix/create_kube.md) to create a kubernetes cluster in Nutanix.
 
 2.  Go to **Menu > Services > Karbon**
 
     ![](images/choosekarbon.png)
 
-3.  Select your karbon cluster
+3.  Select your Karbon cluster
 
 4.  Click on Actions > Download Kubeconfig
 
@@ -61,7 +73,8 @@ In a production implementation make sure sufficient thought has been put in for 
     physical volume claims using the following commands
 
     ```bash
-    k get ns k get sc,pv,pvc 
+    k get ns 
+    k get sc,pv,pvc 
     k get po -n ntnx-system
     ```
     ![](images/klistresources.png)
@@ -71,10 +84,6 @@ In a production implementation make sure sufficient thought has been put in for 
             resources so it is ready to use. You have the option to provision
             additional storage claims, physical volumes, etc by using the Karbon
             console or using kubectl with YAML files
-
-You can also notice that Prometheus pods are running in the `ntnx-system`. We will make use of this Prometheus implementation as a data source for Grafana.
-
-Now that you have an understanding of available kubernetes cluster resources, go ahead and install ELK Stack.
 
 ## Install ELK Stack
 
@@ -86,7 +95,7 @@ We will install the following to get a working implementation of ELK Stack.
     ```bash
     alias 'k=kubectl' 
     k create ns elk #change default namespace to ELK k
-    config set-context --current --namespace=elk
+    k config set-context --current --namespace=elk
     ```
 
 2.  If you would like to customise the size of PV and container
@@ -101,12 +110,20 @@ We will install the following to get a working implementation of ELK Stack.
     # Elasticsearch roles that will be applied to this nodeGroup
     # These will be set as environment variables. E.g. node.master=true
     roles:
-        master: "true"
-        ingest: "true"
-        data: "true"
-
-    replicas: 3
+      - master
+      - data
+      - ingest
+    
+    replicas: 1
     minimumMasterNodes: 1
+    clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
+
+    # Set to use default service account
+
+    rbac:
+      create: false
+      serviceAccountName: "default"
+      automountToken: true
 
     # Shrink default JVM heap.
     esJavaOpts: "-Xmx128m -Xms128m"
@@ -132,33 +149,40 @@ We will install the following to get a working implementation of ELK Stack.
 4.  Run the following command to install elasticsearch
 
     ```bash
-    helm install elasticsearch elastic/elasticsearch -f
-    elastic_values.yaml
-    ```
-    ```bash title="You will see output as follows:"
     helm install elasticsearch elastic/elasticsearch -f elastic_values.yaml
-    # NAME: elasticsearch
-    # LAST DEPLOYED: Wed Dec  2 10:15:16 2020
-    # NAMESPACE: elk
-    # STATUS: deployed
-    # REVISION: 1
-    # NOTES:
-    # 1. Watch all cluster members come up.
-    #   $ k get pods --namespace=elk -l app=elasticsearch-master -w
-    # 2. Test cluster health using Helm test.
-    #   $ helm test elasticsearch
     ```
+    ```text title="You will see output as follows:"
+    helm install elasticsearch elastic/elasticsearch -f elastic_values.yaml
+    NOTES:
+    1. Watch all cluster members come up.
+    $ kubectl get pods --namespace=elk -l app=elasticsearch-master -w
+    2. Retrieve elastic user's password.
+    $ kubectl get secrets --namespace=elk elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+    3. Test cluster health using Helm test.
+    $ helm --namespace=elk test elasticsearch
+    ```
+    ```bash title="Check if pods are coming up"
+    helm install elasticsearch elastic/elasticsearch -f elastic_values.yaml
+    ```
+    ```bash title="Retrieve elastic user's password"
+    k get secrets --namespace=elk elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+    ```
+    ```bash title="Test cluster health using Helm test"
+    helm --namespace=elk test elasticsearch
+    ```
+
+    !!!tip
+            In case there are issues with downloading the pod from Docker hub, follow the instructions [here](../appendix/privatereg.md) to set your service account of choice to use a Docker registry secret containing your Docker public hub credentials.
 
 5.  Wait for the command to execute and check logs to make sure all your elasticsearch resources are running
 
-    ```bash
-    # to check events
+    ```bash title="Check events to make sure there are no errors"
     k get events
-
-    # to check all pods and other services are running
+    ```
+    ```bash title="Check all pods and other services are running"
     k get all
-
-    # You will see output as follows:
+    ```
+    ```bash title="Output"
     # NAME                             READY   STATUS    RESTARTS   AGE
     # elasticsearch-master-0           1/1     Running   0          155m
     # elasticsearch-master-1           1/1     Running   0          155m
@@ -174,23 +198,21 @@ We will install the following to get a working implementation of ELK Stack.
 
 6.  Check the Physical Volumes to get an understanding of what is provisioned to to support Elasticsearch and its storage requirements - here it is 30 GB in capacity. This can be modified in the HELM values file.
 
-    ```bash
+    ```bash title="Check PVC resources"
     k get pvc
-
-    # There will be three to support the three volumes - one for each pod and PV
-
+    ```
+    ```bash title="There will be three to support the three volumes - one for each pod and PV"
     # NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS           AGE
     # elasticsearch-master-elasticsearch-master-0   Bound    pvc-c8aad9f5-f24c-4e2e-917e-55107e072114   30Gi       RWO            default-storageclass   162m
     # elasticsearch-master-elasticsearch-master-1   Bound    pvc-141cc537-250d-472e-b686-c7dfafabf29a   30Gi       RWO            default-storageclass   162m
     # elasticsearch-master-elasticsearch-master-2   Bound    pvc-04302b11-a6e0-459c-8b74-0978f392df07   30Gi       RWO            default-storageclass   162m
-
-    # Check all the events to make sure there are no klistresources
-
+    ```
+    ```bash title="Check all the events to make sure there are no errors"
     k get events
     ```
 
 8.  We have now installed Elasticsearch
-## Install Filebeat
+### Install Filebeat
 
 1.  Configure a values file using the following commands: this is
     required to satisfy Karbon kubernetes cluster and volume mount
@@ -200,34 +222,36 @@ We will install the following to get a working implementation of ELK Stack.
     cat <<EOF > filebeat_values.yaml
     ---
     extraVolumeMounts:
-        - name: varnutanix
-          mountPath: /var/nutanix
-          readOnly: true
+    - name: varnutanix
+      mountPath: /var/nutanix
+      readOnly: true
     extraVolumes:
-        - name: varnutanix
-          hostPath:
-            path: /var/nutanix
+    - name: varnutanix
+      hostPath:
+        path: /var/nutanix
     EOF
     ```
 
 2.  Run the following command to install filebeat
 
     ```bash
-    helm install elasticsearch elastic/filebeat -f filebeat_values.yaml
-    # You will see output as follows:
-
-    # NAME: filebeat
-    # LAST DEPLOYED: Wed Dec  2 10:45:24 2020
-    # NAMESPACE: elk
-    # STATUS: deployed
-    # REVISION: 1
-    # TEST SUITE: None
+    helm install filebeat elastic/filebeat -f filebeat_values.yaml
+    ```
+    ```bash title="Output"
+    NAME: filebeat
+    LAST DEPLOYED: Fri Dec  2 22:28:14 2022
+    NAMESPACE: elk
+    STATUS: deployed
+    REVISION: 1
+    TEST SUITE: None
+    NOTES:
+    1. Watch all containers come up.
+    $ kubectl get pods --namespace=elk -l app=filebeat-filebeat -w
     ```
     ```bash
-    # Note that the filebeat is deployed as a DaemonSet (one on each worker node)
-
-    k get all
-
+    k get pods --namespace=elk -l app=filebeat-filebeat -w
+    ```
+    ```bash title="Output - filebeat is deployed as a DaemonSet (one on each worker node)"
     # NAME                      READY   STATUS              RESTARTS   AGE
 
     # filebeat-filebeat-m6hf4   1/1     Running             0          26s
@@ -262,15 +286,14 @@ We will install the following to get a working implementation of ELK Stack.
     # green open filebeat-7.10.0-2020.12.02-000001 ufD341lKTwin_jpknbOIyA 1 1 2089328   0     1gb 529.1mb
     ```
 
-7.  This confirms that we are ingesting data into Elasticsearch using
-    filebeat
+7.  This confirms that we are ingesting data into Elasticsearch using filebeat
 
-## Install Kibana
+### Install Kibana
 
 1.  Run the following command to install Kibana visualisation GUI
 
     ```bash
-    $ helm install kibana elastic/kibana
+    helm install kibana elastic/kibana
     ```
     ```bash
     # You will see the following output
