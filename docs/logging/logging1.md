@@ -99,11 +99,13 @@ In a production implementation make sure sufficient thought has been put in for 
    
     ![](images/kibanaview.png)
 
-    Any Karbon deployed cluster will collect logs from kubernetes nodes. 
+    Any Karbon deployed cluster will collect logs from kubernetes nodes
+
+6. Experiment with searching for some keywords in the logs.
 
 ### Takeaways
 
-- Karbon comes with loggin enable using the ELK stack
+- Karbon comes with logging enabled using the ELK stack
 - Additional instances of ELK stack can be created to monitor additional deployed applications
 
 
