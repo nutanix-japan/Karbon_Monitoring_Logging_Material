@@ -12,7 +12,7 @@ At the end of the bootcamp, attendees should understand the Core concepts and te
 ## What's New
 
 - Workshop updated for the following software versions:
-    - AOS & PC 5.11.2.x
+    - AOS5.20.3.x & PC pc.2022.4.0.1
 
 - Optional Lab Updates:
 
@@ -223,6 +223,6 @@ For RTP:
 
 ## Nutanix Version Info
 
--   AOS 5.20.2.1
--   Prism Central pc.2021.9.0.2
+-   AOS 5.20.3.x & 
+-   PC pc.2022.4.0.1
 -   Calm 3.3.1

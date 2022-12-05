@@ -89,7 +89,7 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
 
 6.  Get the Grafana URL to visit by running these commands in the same shell
 
-    ```bash title=""
+    ```bash title="Get the Grafana URL"
     export NODE_PORT=$(kubectl get --namespace grafana -o jsonpath="{.spec.ports[0].nodePort}" services grafana-1669965734)
     export NODE_IP=$(kubectl get nodes --namespace grafana -o jsonpath="{.items[0].status.addresses[0].address}")
     echo http://$NODE_IP:$NODE_PORT

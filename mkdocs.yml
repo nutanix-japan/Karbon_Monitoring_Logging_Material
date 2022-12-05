@@ -91,7 +91,7 @@ nav:
        - 'Visualising Metrics in Karbon': visualise/visualise.md
        - 'Cleaning up and Takeaways': cleanup/cleanup.md
     - 'Logging': 
-       - 'Logging in Nutanix Karbon': logging/logging.md
+       - 'Logging in Nutanix Karbon': logging/logging1.md
     - 'Appendix': 
        - 'Creating Linux Tools VM': appendix/linux_tools_vm.md
        - 'Helm': appendix/helm.md
