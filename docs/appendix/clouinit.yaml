@@ -12,4 +12,6 @@ packages:
   - bind-utils
   - nmap
   - curl
+  - wget 
+  - vim
   
