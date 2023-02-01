@@ -60,8 +60,6 @@ credentials:
     yum update -y
     yum install -y ntp ntpdate unzip stress nodejs python-pip s3cmd awscli
     yum install -y bind-utils nmap wget git
-    npm install -g request
-    npm install -g express
     ```
 
 3. Enable and configure NTP by running the following commands:
@@ -80,15 +78,5 @@ credentials:
     systemctl stop firewalld
     setenforce 0
     sed -i 's/enforcing/disabled/g' /etc/selinux/config /etc/selinux/config
-    ```
-
-5. Optional step - Install Python by running the following commands:
-
-    ``` bash
-    yum -y install python36
-    python3.6 -m ensurepip
-    yum -y install python36-setuptools
-    pip install -U pip
-    pip install boto3
     ```
 Now your Linux Tools VM is ready for you to use.
