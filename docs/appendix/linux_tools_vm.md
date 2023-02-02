@@ -44,7 +44,7 @@ Deploy this VM on your assigned cluster (if not already deployed).
         - **Configuration Method** - Custom Script 
         - Paste the following script in the script window 
         
-          ```yaml title="Remember to change to your hostname"
+          ```yaml
           #cloud-config
 
           # Set the hostname
