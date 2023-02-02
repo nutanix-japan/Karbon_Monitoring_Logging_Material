@@ -4,79 +4,107 @@ title: Linux Tools VM
 
 ## Overview
 
-This CentOS VM image will be staged with packages used to support
-multiple lab exercises.
-
-Deploy this VM on your assigned cluster if directed to do so as part of
-**Lab Setup**.
+Deploy this VM on your assigned cluster (if not already deployed).
 
 !!!caution
-        Only deploy the VM once, it does not need to be cleaned up as part of any lab completion    
 
-## Deploying CentOS
+          Only deploy the VM once with your *Initials* in the VM name, it does not need to be cleaned up as part of any lab completion.
 
-1. In **Prism Central** > select **Menu**> **Compute and Storage** and **VMs**.
 
-2. Click on **Create VM**
+## Deploying Linux Tools VM
 
-3. Fill out the following fields:
+1. In **Prism Central** > select **Menu** > **Compute and Storage > VMs**, and click **Create VM**
 
+1.  Fill out the following fields:
     -   **Name** - *Initials*-Linux-ToolsVM
-
     -   **Description** - (Optional) Description for your VM.
-
-    -   **vCPU(s)** - 2
-
-    -   **Number of Cores per vCPU** - 1
-
+    -   **Number of VMs** - 1
+    -   **CPU(s)** - 4
+    -   **Number of Cores per CPU** - 1
     -   **Memory** - 4 GiB
-
-    -   Select **Attach Disk**
-
-        -   **Type** - DISK
-        -   **Operation** - Clone from Image
-        -   **Image** - CentOS7.qcow2
-        -   Select **Save**
-
-4.   Select **Attach to Subnet**
-
+2.  Click **Next**
+3.  Under **Disks** select **Attach Disk**
+    -   **Type** - DISK
+    -   **Operation** - Clone from Image
+    -   **Image** - Linux_ToolsVM.qcow2
+    -   **Capacity** - leave at default size
+    -   **Bus Type** - leave at default SCSI Setting
+4.  Click **Save**
+5.  Under **Networks** select **Attach to Subnet**
     -   **VLAN Name** - Primary
-    -   Select **Save**
+    -   **Network Connection State** - Connected
+    -   **Assignment Type** - Assign with DHCP
+6.  Click **Save**
+7.  Click **Next** at the bottom
+8.  In **Management** section
+    -   **Categories** - leave blank
+    -   **Timezone** - leave at default UTC
+    -   **Guest Customization** - 
+        - **Script Type** - Cloud-init (Linux)
+        - **Configuration Method** - Custom Script 
+        - Paste the following script in the script window 
+        
+          ```yaml title="Remember to change to your hostname"
+          #cloud-config
 
-5. Click **Next** and **Create VM** to create the VM.
+          # Set the hostname
+          hostname: myhost
+          
+          # Configure the network
+          network:
+            version: 2
+            renderer: networkd
+            ethernets:
+              eth0:
+                dhcp4: yes
 
-6. In the list of VMs, select *Initials*-Linux-ToolsVM 
+          # Create a new user
+          users:
+            - default
+            - name: nutanix
+              groups: users
+              ssh_authorized_keys:
+                # Insert your public key here
+                - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGD8G3rihOrlVjdiayQy/6TX3tGiLZrIBAwtsgpeq/BsY3uprTalg7VFuwa/hqDtWxU7ewHPNknVjDntOBcAFXFjfs3bHc7FKJ50Bw1vfK6q3u+LSEVpy0u8gJx7AsMa26TlYUaVH2+KlgPOaSvoJYuHy3Zwshw8dLK3Qx29dDSxhotAJivZE8TT4jL+Be60y1E72zCUzWzJFfldMwlgyxw323r6awgxmGYlqUoz3ljkHI9Xflb9fMkBWCYhDDv2y7dHEc3W1vRokKvd4bFpbWUFJbEiwOj4PFTUqoLKhqmCmjbjJBmkWeA2qDzjoxzI/16T1CigFZDdAdMTIDa/KD
+              passwd: nutanix/4u
+          
+          # Enable password authentication for root
+          ssh_pwauth: True
+          
+          # Run additional commands
+          runcmd:
+            - 'sleep 10' # sleeping for the network to be UP
+            - 'echo "newuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers'
 
-7. From the **Actions** menu, choose **Power On**.
+          # Run package upgrade
+          package_upgrade: true
 
-## Installing Linux Tools
+          # Install the following packages - add extra that you would need
+          packages:
+            - git
+            - bind-utils
+            - nmap
+            - curl
+            - wget 
+            - vim
+           ```
+9. Click on **Next**
+9.  Click **Create VM** at the bottom
+10. Go back to **Prism Central** > **Menu** > **Compute and Storage** > **VMs**
+11. Select your *Initials*-Linux-ToolsVM
+12. Under **Actions** drop-down menu, choose **Power On**
 
-1. Login to the VM via ssh or Console session, using the following
-credentials:
+    !!!note
+            It may take up to 10 minutes for the VM to be ready.
 
-2.  Install the software needed by running the following commands:
+            You can watch the console of the VM from Prism Central to make sure all the clouinit script has finished running.
+
+13. Login to the VM via SSH or Console session, using the following command:
 
     ```bash
-    yum update -y
-    yum install -y ntp ntpdate unzip stress nodejs python-pip s3cmd awscli
-    yum install -y bind-utils nmap wget git
+    ssh -i <your_private_key> -l nutanix <IP of LinuxToolsVM>
+    ```
+    ```bash title="Example command"
+    ssh -i id_rsa -l nutanix 10.54.63.95
     ```
 
-3. Enable and configure NTP by running the following commands:
-
-    ``` bash
-    systemctl start ntpd
-    systemctl enable ntpd
-    ntpdate -u -s 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
-    systemctl restart ntpd
-    ```
-
-4. Disable the firewall and SELinux by running the following commands:
-
-    ``` bash
-    systemctl disable firewalld
-    systemctl stop firewalld
-    setenforce 0
-    sed -i 's/enforcing/disabled/g' /etc/selinux/config /etc/selinux/config
-    ```
-Now your Linux Tools VM is ready for you to use.
