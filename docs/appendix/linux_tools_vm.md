@@ -44,62 +44,63 @@ Deploy this VM on your assigned cluster (if not already deployed).
         - **Configuration Method** - Custom Script 
         - Paste the following script in the script window 
         
-          ```yaml
-          #cloud-config
+         ```yaml
+         #cloud-config
+         
+         # Set the hostname
+         hostname: myhost
+         
+         # Configure the network
+         network:
+         version: 2
+         renderer: networkd
+         ethernets:
+             eth0:
+             dhcp4: yes
+         
+         # Create a new user
+         users:
+         - default
+         - name: nutanix
+             groups: users
+             ssh_authorized_keys:
+             # Insert your public key here
+             - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... # Generate a key pair and paste the public key here
+             passwd: nutanix/4u                              # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
+         
+         # Enable password authentication for root
+         ssh_pwauth: True
+         
+         # Run additional commands
+         runcmd:
+         - 'sleep 10' # sleeping for the network to be UP
+         - 'echo "newuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers'
+         
+         # Run package upgrade
+         package_upgrade: true
+         
+         # Install the following packages - add extra that you would need
+         packages:
+         - git
+         - bind-utils
+         - nmap
+         - curl
+         - wget 
+         - vim
+         ```
 
-          # Set the hostname
-          hostname: myhost
-          
-          # Configure the network
-          network:
-            version: 2
-            renderer: networkd
-            ethernets:
-              eth0:
-                dhcp4: yes
-
-          # Create a new user
-          users:
-            - default
-            - name: nutanix
-              groups: users
-              ssh_authorized_keys:
-                # Insert your public key here
-                - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... # Generate a key pair and paste the public key here
-              passwd: nutanix/4u                                # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
-          
-          # Enable password authentication for root
-          ssh_pwauth: True
-          
-          # Run additional commands
-          runcmd:
-            - 'sleep 10' # sleeping for the network to be UP
-            - 'echo "newuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers'
-
-          # Run package upgrade
-          package_upgrade: true
-
-          # Install the following packages - add extra that you would need
-          packages:
-            - git
-            - bind-utils
-            - nmap
-            - curl
-            - wget 
-            - vim
-           ```
 9. Click on **Next**
-9.  Click **Create VM** at the bottom
-10. Go back to **Prism Central** > **Menu** > **Compute and Storage** > **VMs**
-11. Select your *Initials*-Linux-ToolsVM
-12. Under **Actions** drop-down menu, choose **Power On**
+10. Click **Create VM** at the bottom
+11. Go back to **Prism Central** > **Menu** > **Compute and Storage** > **VMs**
+12. Select your *Initials*-Linux-ToolsVM
+13. Under **Actions** drop-down menu, choose **Power On**
 
     !!!note
             It may take up to 10 minutes for the VM to be ready.
 
             You can watch the console of the VM from Prism Central to make sure all the clouinit script has finished running.
 
-13. Login to the VM via SSH or Console session, using the following command:
+14. Login to the VM via SSH or Console session, using the following command:
 
     ```bash
     ssh -i <your_private_key> -l nutanix <IP of LinuxToolsVM>
