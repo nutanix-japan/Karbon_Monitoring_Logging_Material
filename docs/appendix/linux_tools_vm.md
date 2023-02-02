@@ -65,8 +65,8 @@ Deploy this VM on your assigned cluster (if not already deployed).
               groups: users
               ssh_authorized_keys:
                 # Insert your public key here
-                - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGD8G3rihOrlVjdiayQy/6TX3tGiLZrIBAwtsgpeq/BsY3uprTalg7VFuwa/hqDtWxU7ewHPNknVjDntOBcAFXFjfs3bHc7FKJ50Bw1vfK6q3u+LSEVpy0u8gJx7AsMa26TlYUaVH2+KlgPOaSvoJYuHy3Zwshw8dLK3Qx29dDSxhotAJivZE8TT4jL+Be60y1E72zCUzWzJFfldMwlgyxw323r6awgxmGYlqUoz3ljkHI9Xflb9fMkBWCYhDDv2y7dHEc3W1vRokKvd4bFpbWUFJbEiwOj4PFTUqoLKhqmCmjbjJBmkWeA2qDzjoxzI/16T1CigFZDdAdMTIDa/KD
-              passwd: nutanix/4u
+                - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... # Generate a key pair and paste the public key here
+              passwd: nutanix/4u                                # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
           
           # Enable password authentication for root
           ssh_pwauth: True
