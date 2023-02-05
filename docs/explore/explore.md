@@ -21,7 +21,7 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
            If you are using your PC/Mac you can also ssh/putty to your Linux Tools VM
 
     ```bash
-    ssh -l root <Linux Tools VM IP address>
+    ssh -i <your_private_key> -l nutanix <IP of LinuxToolsVM>
     ```
 
 2.  Paste the command in clipboard to the shell in your Linux Tools VM to install kubectl
@@ -72,7 +72,9 @@ If you haven't got Helm deployed use these [instructions](../appendix/helm.md) t
     physical volume claims using the following commands
 
     ```bash
-    k get ns k get sc,pv,pvc k get po -n ntnx-system
+    k get ns 
+    k get sc,pv,pvc 
+    k get po -n ntnx-system
     ```
 
     ![](images/klistresources.png)
@@ -121,7 +123,7 @@ Let's access the Prometheus UI to check for available metrics.
     command.
 
     ```bash
-       k get svc -n ntnx-system
+    k get svc -n ntnx-system
     ```
 
     ![](images/prom-svc-port.png)
@@ -130,14 +132,14 @@ Let's access the Prometheus UI to check for available metrics.
     Mint VM to be able to access Prometheus UI.
 
     ```bash
-       k port-forward svc/prometheus-k8s 9090:9090 &
+    k port-forward svc/prometheus-k8s 9090:9090 &
     ```
 
 3.  Now you should be able to access Prometheus UI in your Linux Mint VM
     using the following URL
 
     ```url
-       http://localhost:9090
+    http://localhost:9090
     ```
 
     ![](images/prom-splash.png)

@@ -42,52 +42,72 @@ Deploy this VM on your assigned cluster (if not already deployed).
     -   **Guest Customization** - 
         - **Script Type** - Cloud-init (Linux)
         - **Configuration Method** - Custom Script 
+  
+        <details>
+
+          <summary>Do you need to create a SSH key pair?</summary>
+           
+           You can use any online ssh key generator if you are using Windows. Execute the following commands in you are in a Linux / Mac environment to generate a private key.
+    
+           ```bash
+           ssh-keygen -t rsa -b 2048 -C "Created for Linux Tools VM"
+           
+           # follow prompts 
+           # do not specify passphrase
+           # once completed run the following command
+           
+           cat id_rsa.pub
+           
+           # copy the contents of the id_rsa.pub file to your cloudinit yaml file
+           ```
+        </details>
+
         - Paste the following script in the script window 
         
-         ```yaml
-         #cloud-config
-         
-         # Set the hostname
-         hostname: myhost
-         
-         # Configure the network
-         network:
-         version: 2
-         renderer: networkd
-         ethernets:
-             eth0:
-             dhcp4: yes
-         
-         # Create a new user
-         users:
-         - default
-         - name: nutanix
-             groups: users
-             ssh_authorized_keys:
-             # Insert your public key here
-             - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... # Generate a key pair and paste the public key here
-             passwd: nutanix/4u                              # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
-         
-         # Enable password authentication for root
-         ssh_pwauth: True
-         
-         # Run additional commands
-         runcmd:
-         - 'sleep 10' # sleeping for the network to be UP
-         - 'echo "newuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers'
-         
-         # Run package upgrade
-         package_upgrade: true
-         
-         # Install the following packages - add extra that you would need
-         packages:
-         - git
-         - bind-utils
-         - nmap
-         - curl
-         - wget 
-         - vim
-         ```
+          ```yaml
+          #cloud-config
+          
+          # Set the hostname
+          hostname: myhost
+          
+          # Configure the network
+          network:
+          version: 2
+          renderer: networkd
+          ethernets:
+              eth0:
+              dhcp4: yes
+          
+          # Create a new user
+          users:
+          - default
+          - name: nutanix
+              groups: users
+              ssh_authorized_keys:
+              # Insert your public key here
+              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... # Generate a key pair and paste the public key here
+              passwd: nutanix/4u                              # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
+          
+          # Enable password authentication for root
+          ssh_pwauth: True
+          
+          # Run additional commands
+          runcmd:
+          - 'sleep 10' # sleeping for the network to be UP
+          - 'echo "nutanix ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers'
+          
+          # Run package upgrade
+          package_upgrade: true
+          
+          # Install the following packages - add extra that you would need
+          packages:
+          - git
+          - bind-utils
+          - nmap
+          - curl
+          - wget 
+          - vim
+          ```
 
 9. Click on **Next**
 10. Click **Create VM** at the bottom
