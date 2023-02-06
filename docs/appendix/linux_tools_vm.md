@@ -70,23 +70,16 @@ Deploy this VM on your assigned cluster (if not already deployed).
           # Set the hostname
           hostname: myhost
           
-          # Configure the network
-          network:
-          version: 2
-          renderer: networkd
-          ethernets:
-              eth0:
-              dhcp4: yes
-          
           # Create a new user
           users:
           - default
           - name: nutanix
               groups: users
               ssh_authorized_keys:
-              # Insert your public key here
-              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... # Generate a key pair and paste the public key here
-              passwd: nutanix/4u                              # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
+              # Paste the generated public key here
+              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...... 
+              # You can also use the 1N or 6N format (openssl passwd -1 "yourplaintextpassword")
+              passwd: $1$CW55TPkL$gzOS35bI6fdxtwntlE3CN/                             
           
           # Enable password authentication for root
           ssh_pwauth: True
