@@ -26,7 +26,7 @@ In kubernets, we can configure the service accounts to use your public registry 
    ```
 3. Create a pull secret using your Docker account
    ```bash
-   kubectl create secret generic regcred \
+   kubectl create secret docker-registry regcred \
    --docker-username=DUMMY_USERNAME --docker-password=DUMMY_DOCKER_PASSWORD \
    --docker-email=DUMMY_DOCKER_EMAIL
    ```
