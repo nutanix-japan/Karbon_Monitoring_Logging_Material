@@ -1,0 +1,9 @@
+---
+extraVolumeMounts:
+   - name: varnutanix
+     mountPath: /var/nutanix
+     readOnly: true
+extraVolumes:
+   - name: varnutanix
+     hostPath:
+      path: /var/nutanix
